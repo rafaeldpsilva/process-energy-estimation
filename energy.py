@@ -1,4 +1,4 @@
-import energyusage
+import energymonitor
 import pandas as pd
 
 def stoogesort(arr, l, h):
@@ -35,7 +35,7 @@ def dummy_sorting_alg():
     print("Array has been sorted!")
 
 def main():
-    energyusage.evaluate(dummy_sorting_alg, pdf=True)
+    energy_monitor.evaluate(dummy_sorting_alg, pdf=True)
 
 if __name__ == "__main__":
     main()
