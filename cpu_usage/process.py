@@ -1,35 +1,32 @@
 import psutil
-import subprocess
+import os
 import asyncio
+from powerlog import get_process_report
 
-cpu_percent = 0
+async def process_usage(pid):
+    process = psutil.Process(pid=pid)
+    while True:
+        with process.oneshot():
+            name = process.name()
+            print(process)
 
-async def power_log():
-    subprocess.call('\& "C:\Program Files\Intel\Power Gadget 3.6\PowerLog3.0.exe" -duration 3 ', shell=True)
+async def evaluate(command):
+    get_process_report("process_v2",command)
     return 0
 
-async def process_usage(process):
-    global cpu_percent
-    cpu_percent = process.cpu_percent(interval=3)
-    return cpu_percent
+async def run_evaluation():
+    pid = os.getpid()
+    print(pid)
 
-async def main():
-    # Iterate over all running processes
-    for proc in psutil.process_iter():
-        if( proc.name() == "stremio.exe"):
-            process = psutil.Process(pid=proc.pid)
-            with process.oneshot():
-                name = process.name()
+    f1 = loop.create_task(evaluate('"python sorting_algorithms.py"'))
+    f2 = loop.create_task(process_usage(pid))
+    await asyncio.wait([f1,f2])
+    f2.cancel()
 
-                f1 = loop.create_task(power_log())
-                f2 = loop.create_task(process_usage(process))
-                await asyncio.wait([f1, f2])
-                
-                
-                pid = process.pid
-
-            print("{name="+ name+ " pid="+ str(pid)+ " cpu_percent=" + str(cpu_percent) + "}")
-
+#def main():
 loop = asyncio.get_event_loop()
-loop.run_until_complete(main())
+loop.run_until_complete(run_evaluation())
 loop.close()
+
+#if __name__ == '__main__':
+#   main()

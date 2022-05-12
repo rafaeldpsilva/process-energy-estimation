@@ -29,9 +29,9 @@ def get_base_energy(duration):
     return [base, base_time]
 
 def get_process_energy(base, base_time, command):
-    get_process_report(command)
+    get_process_report(file_name="process_v1",command = command)
 
-    data = read_csv('./reports/process.csv')  
+    data = read_csv('./reports/process.csv')
 
     total = data["Cumulative Processor Energy_0(Joules)"].iloc[-1]
     process_time = data["Elapsed Time (sec)"].iloc[-1]
