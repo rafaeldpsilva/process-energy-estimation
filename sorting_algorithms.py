@@ -1,4 +1,5 @@
 import pandas as pd
+import os
 
 def stoogesort(arr, l, h):
 	if l >= h:
@@ -77,6 +78,9 @@ def dummy_sorting_alg(alg):
 		mergeSort(arr)
 
 def main():
+	f = open("reports/pid.txt", "w")
+	f.write(str(os.getpid()))
+	f.close()
 	dummy_sorting_alg("stooge")
 
 if __name__ == "__main__":
