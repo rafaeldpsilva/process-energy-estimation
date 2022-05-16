@@ -1,0 +1,14 @@
+@startuml
+component System{
+    component Scripts 
+    component CPUPowerReader
+    component GPUPowerReader
+    component RAMPowerReader
+    component OutletPowerReader
+}
+
+Scripts -- CPUPowerReader
+Scripts -- RAMPowerReader
+Scripts -- GPUPowerReader
+Scripts -- OutletPowerReader
+@enduml
