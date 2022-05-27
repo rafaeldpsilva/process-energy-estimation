@@ -1,5 +1,7 @@
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
+import os
 
 #Utils
 SYSTEM_TIME = 0
@@ -52,6 +54,30 @@ def read_txt(name):
         df = pd.concat([df,data], ignore_index = True, axis = 0)
 
     return df
+
+def plot_power(df):
+    plt.plot(df['Elapsed Time (sec)'], df['Processor Power_0(Watt)'], label='Processor Power_0(Watt)')
+    plt.plot(df['Elapsed Time (sec)'],df['Process CPU Power(Watt)'], label='Process CPU Power(Watt)')
+    plt.legend()
+    plt.show()
+
+def plot_usage():
+    plt.plot(df['Elapsed Time (sec)'], df['Process CPU Usage(%)'], label='Process CPU Usage(%)')
+    plt.plot(df['Elapsed Time (sec)'], df[' CPU Utilization(%)'], label='CPU Utilization(%)')
+    plt.ylim([0,110])
+    plt.legend()
+    plt.show()
+
+def print_results(elapsed_time,consumption):
+    print("The process lasted: " + str(elapsed_time) + " Seconds")
+    print("The process consumed: " + str(consumption) + " Watts")
+    print("The process consumed: " + str(round(consumption/elapsed_time,4)) + " Joules")
+
+def initialize_files():
+    if os.path.exists('reports/pid.txt'):
+        os.remove("reports/process_v2.csv")
+    f = open("reports/report.txt", "w")
+    f.close()
 
 # format : 00:00:00:000
 def to_microsecs(string):
