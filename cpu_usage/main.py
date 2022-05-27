@@ -6,8 +6,6 @@ import os
 import pandas as pd
 import time
 import datetime
-import time
-import matplotlib.pyplot as plt
 
 def join_data():
     total_data = read_csv('reports/process_v2.csv')
@@ -42,7 +40,7 @@ def process_usage(pid):
     while True:
         try:
             f = open("reports/report.txt", "a")
-            f.write(datetime.datetime.now().strftime("%H:%M:%S:%f")+ " " + str(process.cpu_percent())+"\n")
+            f.write(datetime.datetime.now().strftime("%H:%M:%S:%f")+ " " + str(process.cpu_percent(interval=0.05))+"\n")
             f.close()
         except:
             os.remove("reports/pid.txt")
@@ -68,37 +66,26 @@ def estimate_process_power_consumption(df):
     return [consumption, df1]
 
 def main():
-    """ os.remove("reports/process_v2.csv")
-    f = open("reports/report.txt", "w")
-    f.close()
+    initialize_files()
 
     thread = Thread(target = process_usage, args = (0, ))
     thread.start()
-    
     get_process_report("process_v2",'"python sorting_algorithms.py"')
-    
-    thread.join() """
+    thread.join()
   
     df=join_data()
     [consumption,df] = estimate_process_power_consumption(df)
-    
     elapsed_time = df['Elapsed Time (sec)'].iloc[-1]
-    print("The process lasted: " + str(elapsed_time) + " Seconds")
-    print("The process consumed: " + str(consumption) + " Watts")
-    print("The process consumed: " + str(round(consumption/elapsed_time,4)) + " Joules")
+   
+    print_results(elapsed_time,consumption)
     
-    """ plt.plot(df['Elapsed Time (sec)'], df['Process CPU Usage(%)'], label='Process CPU Usage(%)')
-    plt.plot(df['Elapsed Time (sec)'], df[' CPU Utilization(%)'], label='CPU Utilization(%)')
-    plt.ylim([0,110])
-    plt.legend()
-    plt.show() """
+    """ plot_usage() """
     
-    df.to_csv('reports/n.csv') 
-    plt.plot(df['Elapsed Time (sec)'], df['Processor Power_0(Watt)'], label='Processor Power_0(Watt)')
-    plt.plot(df['Elapsed Time (sec)'],df['Process CPU Power(Watt)'], label='Process CPU Power(Watt)')
-    plt.legend()
-    plt.show()
+    df.to_csv('reports/n.csv')
+
+    plot_power(df)
+   
 
 
 if __name__ == '__main__':
-   main()
+    main()
