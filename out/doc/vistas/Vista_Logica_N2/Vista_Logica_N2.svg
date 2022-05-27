@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" contentScriptType="application/ecmascript" contentStyleType="text/css" height="329px" preserveAspectRatio="none" style="width:820px;height:329px;background:#FFFFFF;" version="1.1" viewBox="0 0 820 329" width="820px" zoomAndPan="magnify"><defs><filter height="300%" id="f16x5mptoli3xg" width="300%" x="-1" y="-1"><feGaussianBlur result="blurOut" stdDeviation="2.0"/><feColorMatrix in="blurOut" result="blurOut2" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .4 0"/><feOffset dx="4.0" dy="4.0" in="blurOut2" result="blurOut3"/><feBlend in="SourceGraphic" in2="blurOut3" mode="normal"/></filter></defs><g><!--MD5=[99b31deea5d7419a569cd5090bf83263]
+cluster System--><rect fill="#FFFFFF" filter="url(#f16x5mptoli3xg)" height="208" style="stroke:#000000;stroke-width:1.5;" width="799" x="7" y="7"/><rect fill="#FFFFFF" height="10" style="stroke:#000000;stroke-width:1.5;" width="15" x="786" y="12"/><rect fill="#FFFFFF" height="2" style="stroke:#000000;stroke-width:1.5;" width="4" x="784" y="14"/><rect fill="#FFFFFF" height="2" style="stroke:#000000;stroke-width:1.5;" width="4" x="784" y="18"/><text fill="#000000" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacing" textLength="50" x="381.5" y="34.5332">System</text><!--MD5=[f40f77c08947afcca4b9f032db8688c9]
+entity Scripts--><rect fill="#FEFECE" filter="url(#f16x5mptoli3xg)" height="47.6094" style="stroke:#A80036;stroke-width:1.5;" width="83" x="360.5" y="43"/><rect fill="#FEFECE" height="10" style="stroke:#A80036;stroke-width:1.5;" width="15" x="423.5" y="48"/><rect fill="#FEFECE" height="2" style="stroke:#A80036;stroke-width:1.5;" width="4" x="421.5" y="50"/><rect fill="#FEFECE" height="2" style="stroke:#A80036;stroke-width:1.5;" width="4" x="421.5" y="54"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="43" x="375.5" y="77.5332">Scripts</text><!--MD5=[e0a33397f93f2b6b1a24c48cc73a986e]
+entity CPU--><rect fill="#FEFECE" filter="url(#f16x5mptoli3xg)" height="47.6094" style="stroke:#A80036;stroke-width:1.5;" width="162" x="222" y="151"/><rect fill="#FEFECE" height="10" style="stroke:#A80036;stroke-width:1.5;" width="15" x="364" y="156"/><rect fill="#FEFECE" height="2" style="stroke:#A80036;stroke-width:1.5;" width="4" x="362" y="158"/><rect fill="#FEFECE" height="2" style="stroke:#A80036;stroke-width:1.5;" width="4" x="362" y="162"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="122" x="237" y="185.5332">CPU Power Reader</text><!--MD5=[ab6cc78aeaa82ab42a1cfb89503913b6]
+entity GPU--><rect fill="#FEFECE" filter="url(#f16x5mptoli3xg)" height="47.6094" style="stroke:#A80036;stroke-width:1.5;" width="163" x="419.5" y="151"/><rect fill="#FEFECE" height="10" style="stroke:#A80036;stroke-width:1.5;" width="15" x="562.5" y="156"/><rect fill="#FEFECE" height="2" style="stroke:#A80036;stroke-width:1.5;" width="4" x="560.5" y="158"/><rect fill="#FEFECE" height="2" style="stroke:#A80036;stroke-width:1.5;" width="4" x="560.5" y="162"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="123" x="434.5" y="185.5332">GPU Power Reader</text><!--MD5=[9a08308e3c6a2a920a99bdbbb79ccc77]
+entity RAM--><rect fill="#FEFECE" filter="url(#f16x5mptoli3xg)" height="47.6094" style="stroke:#A80036;stroke-width:1.5;" width="164" x="23" y="151"/><rect fill="#FEFECE" height="10" style="stroke:#A80036;stroke-width:1.5;" width="15" x="167" y="156"/><rect fill="#FEFECE" height="2" style="stroke:#A80036;stroke-width:1.5;" width="4" x="165" y="158"/><rect fill="#FEFECE" height="2" style="stroke:#A80036;stroke-width:1.5;" width="4" x="165" y="162"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="124" x="38" y="185.5332">RAM Power Reader</text><!--MD5=[521e3f672ff1045f69c311733b568075]
+entity OUT--><rect fill="#FEFECE" filter="url(#f16x5mptoli3xg)" height="47.6094" style="stroke:#A80036;stroke-width:1.5;" width="172" x="618" y="151"/><rect fill="#FEFECE" height="10" style="stroke:#A80036;stroke-width:1.5;" width="15" x="770" y="156"/><rect fill="#FEFECE" height="2" style="stroke:#A80036;stroke-width:1.5;" width="4" x="768" y="158"/><rect fill="#FEFECE" height="2" style="stroke:#A80036;stroke-width:1.5;" width="4" x="768" y="162"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="132" x="633" y="185.5332">Outlet Power Reader</text><!--MD5=[d420a9cf64d6b545f3755253952b3c16]
+entity IPG--><ellipse cx="203" cy="289" fill="#FEFECE" filter="url(#f16x5mptoli3xg)" rx="8" ry="8" style="stroke:#A80036;stroke-width:1.5;"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="120" x="143" y="320.5332">Intel Power Gadget</text><!--MD5=[1b6f34fe2510f2f714dae0aab426a88b]
+entity NSMI--><ellipse cx="501" cy="289" fill="#FEFECE" filter="url(#f16x5mptoli3xg)" rx="8" ry="8" style="stroke:#A80036;stroke-width:1.5;"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="179" x="411.5" y="320.5332">NVIDIA System Management</text><!--MD5=[d2dcce8e5c22e83af075ba30e149ff56]
+link CPU to IPG--><path d="M275.39,206.92 C256.57,228 232.42,255.05 217.32,271.96 " fill="none" id="CPU-IPG" style="stroke:#A80036;stroke-width:1.0;stroke-dasharray:1.0,3.0;"/><path d="M218.6889,283.1259 A9,9 0 0 0 206.0709 271.8615" style="stroke:#A80036;stroke-width:1.5;fill:none;"/><rect fill="#FFFFFF" height="10" style="stroke:#A80036;stroke-width:1.5;" width="10" x="277.28" y="194.21"/><!--MD5=[4808ffb5f3367471f05f6f8c52ad3ce3]
+link RAM to IPG--><path d="M132.06,206.92 C150.5,228 174.17,255.05 188.97,271.96 " fill="none" id="RAM-IPG" style="stroke:#A80036;stroke-width:1.0;stroke-dasharray:1.0,3.0;"/><path d="M200.1588,271.9049 A9,9 0 0 0 187.4278 283.0414" style="stroke:#A80036;stroke-width:1.5;fill:none;"/><rect fill="#FFFFFF" height="10" style="stroke:#A80036;stroke-width:1.5;" width="10" x="120.31" y="194.21"/><!--MD5=[ab3c45c7d1978ca3aad84da56904de9d]
+link GPU to NSMI--><path d="M501,209.52 C501,229.17 501,253.24 501,269.51 " fill="none" id="GPU-NSMI" style="stroke:#A80036;stroke-width:1.0;stroke-dasharray:1.0,3.0;"/><path d="M509.4572,276.7118 A9,9 0 0 0 492.5428 276.7118" style="stroke:#A80036;stroke-width:1.5;fill:none;"/><rect fill="#FFFFFF" height="10" style="stroke:#A80036;stroke-width:1.5;" width="10" x="496" y="194.21"/><!--MD5=[70a7730923cb1ed96238bd100ee53d30]
+link Scripts to CPU--><path d="M380.52,91 C364.03,108.66 341.35,132.94 324.78,150.68 " fill="none" id="Scripts-CPU" style="stroke:#A80036;stroke-width:1.0;"/><!--MD5=[a15372c872388e719a8d809c6412dcad]
+link Scripts to GPU--><path d="M423.48,91 C439.97,108.66 462.65,132.94 479.22,150.68 " fill="none" id="Scripts-GPU" style="stroke:#A80036;stroke-width:1.0;"/><!--MD5=[58ec044ce6b5922068295f1977825659]
+link Scripts to RAM--><path d="M360.39,82.85 C310.82,100.54 227.45,130.3 169.5,150.98 " fill="none" id="Scripts-RAM" style="stroke:#A80036;stroke-width:1.0;"/><!--MD5=[02df5d5804aed2753e573f75220b3b86]
+link Scripts to OUT--><path d="M443.67,82.63 C494,100.29 579.24,130.21 638.41,150.98 " fill="none" id="Scripts-OUT" style="stroke:#A80036;stroke-width:1.0;"/><!--MD5=[30f16c8cc7c660328d8046768c34fb83]
+@startuml
+component System{
+    component Scripts 
+    component "CPU Power Reader" as CPU
+    component "GPU Power Reader" as GPU
+    component "RAM Power Reader" as RAM
+    component "Outlet Power Reader" as OUT
+}
+
+interface "Intel Power Gadget" as IPG
+interface "NVIDIA System Management" as NSMI
+
+CPU #~~( IPG
+RAM #~~( IPG
+GPU #~~( NSMI
+
+Scripts - - CPU
+Scripts - - GPU
+Scripts - - RAM
+Scripts - - OUT
+@enduml
+
+PlantUML version 1.2022.0(Tue Jan 11 16:16:42 GMT 2022)
+(GPL source distribution)
+Java Runtime: Java(TM) SE Runtime Environment
+JVM: Java HotSpot(TM) 64-Bit Server VM
+Default Encoding: Cp1252
+Language: pt
+Country: PT
+--></g></svg>

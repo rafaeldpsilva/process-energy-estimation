@@ -1,14 +1,21 @@
 @startuml
 component System{
     component Scripts 
-    component CPUPowerReader
-    component GPUPowerReader
-    component RAMPowerReader
-    component OutletPowerReader
+    component "CPU Power Reader" as CPU
+    component "GPU Power Reader" as GPU
+    component "RAM Power Reader" as RAM
+    component "Outlet Power Reader" as OUT
 }
 
-Scripts -- CPUPowerReader
-Scripts -- RAMPowerReader
-Scripts -- GPUPowerReader
-Scripts -- OutletPowerReader
+interface "Intel Power Gadget" as IPG
+interface "NVIDIA System Management" as NSMI
+
+CPU #~~( IPG
+RAM #~~( IPG
+GPU #~~( NSMI
+
+Scripts -- CPU
+Scripts -- GPU
+Scripts -- RAM
+Scripts -- OUT
 @enduml

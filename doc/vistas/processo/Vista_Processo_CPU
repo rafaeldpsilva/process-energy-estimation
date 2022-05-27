@@ -1,0 +1,36 @@
+@startuml
+
+participant "Main" as MAIN
+participant "Utils" as UTILS
+participant "Thread" as THRD
+participant "PowerLog" as PL
+participant "Intel Power Gadget" as IPG
+
+activate MAIN
+MAIN -> UTILS: initialize_files()
+activate UTILS
+deactivate UTILS
+
+MAIN -> THRD**: create(target = process_usage, args = 0)
+
+MAIN-> MAIN: pid = getpid()
+MAIN -> THRD: start()
+activate THRD
+loop 
+THRD -> THRD: get_cpu_percentage(pid)
+end loop 
+MAIN -> PL: get_process_report(save_file_name, command)
+activate PL
+PL -> IPG: powerlog.exe -file save_file_name -cmd command
+activate IPG
+
+deactivate IPG
+deactivate PL
+MAIN -> THRD : join()
+deactivate THRD
+
+MAIN -> MAIN: estimate_process_power_consumption()
+
+MAIN -> MAIN: save_results()
+
+@enduml
