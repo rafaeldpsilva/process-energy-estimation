@@ -1,0 +1,11 @@
+@startuml
+
+MAIN_THREAD -> THREAD_1 : process_cpu_usage()
+MAIN_THREAD -> THREAD_2 : nvidia-smi 
+
+MAIN_THREAD -> MAIN_THREAD : powerlog
+MAIN_THREAD -> THREAD_1: join()
+
+MAIN_THREAD -> THREAD_2 : kill()
+
+@enduml
