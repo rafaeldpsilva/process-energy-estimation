@@ -1,8 +1,0 @@
-@startuml
-
-activate System
-System -> CPUPowerReader: readCpuPower()
-activate CPUPowerReader
-deactivate CPUPowerReader
-deactivate System
-@enduml

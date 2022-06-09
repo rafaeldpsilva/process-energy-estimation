@@ -12,6 +12,7 @@ powerlog_filename = 'reports/process.csv'
 process_filename = 'reports/report.txt'
 nvidia_smi_filename = 'reports/nvidia.csv'
 pid_filename = 'reports/pid.txt'
+total_process_data = 'reports/total_process_data.csv'
 
 def process_cpu_usage(pid):
 
@@ -146,7 +147,7 @@ def estimate_dram_power_consumption(df):
     return average_gpu_wattage
 
 def main():
-    """ initialize_files(powerlog_filename, process_filename, nvidia_smi_filename, pid_filename)
+    initialize_files(powerlog_filename, process_filename, nvidia_smi_filename, pid_filename)
 
     thread_cpu = Process(target = process_cpu_usage, args = (0, ))
     thread_cpu.start()
@@ -156,21 +157,21 @@ def main():
     
     thread_cpu.join()
 
-    cmd.kill_process(pid) """
+    cmd.kill_process(pid)
 
     process_df = join_process_data()
-    gpu_process_df = join_gpu_data(process_df)
+    total_process_df = join_gpu_data(process_df)
 
-    [cpu_consumption,gpu_process_df] = estimate_process_power_consumption(gpu_process_df)
-    gpu_consumption = estimate_gpu_power_consumption(gpu_process_df)
-    dram_consumption = estimate_dram_power_consumption(gpu_process_df)
+    [cpu_consumption,total_process_df] = estimate_process_power_consumption(total_process_df)
+    gpu_consumption = estimate_gpu_power_consumption(total_process_df)
+    dram_consumption = estimate_dram_power_consumption(total_process_df)
 
-    elapsed_time = gpu_process_df['Elapsed Time (sec)'].iloc[-1]
+    elapsed_time = total_process_df['Elapsed Time (sec)'].iloc[-1]
     
     total_consumption = cpu_consumption + gpu_consumption + dram_consumption
     print_results(elapsed_time,total_consumption)
     
-    gpu_process_df.to_csv('reports/n.csv')
+    total_process_df.to_csv('reports/total_process_data.csv')
 
 if __name__ == '__main__':
     main()

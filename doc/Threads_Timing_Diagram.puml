@@ -1,11 +1,13 @@
 @startuml
 
+activate MAIN_THREAD
 MAIN_THREAD -> THREAD_1 : process_cpu_usage()
+activate THREAD_1
 MAIN_THREAD -> THREAD_2 : nvidia-smi 
-
+activate THREAD_2
 MAIN_THREAD -> MAIN_THREAD : powerlog
 MAIN_THREAD -> THREAD_1: join()
-
+deactivate THREAD_1
 MAIN_THREAD -> THREAD_2 : kill()
-
+deactivate THREAD_2
 @enduml

@@ -8,7 +8,7 @@ component System{
 }
 
 interface "Intel Power Gadget" as IPG
-interface "NVIDIA System Management" as NSMI
+interface "NVIDIA System Management Interface" as NSMI
 
 CPU #~~( IPG
 RAM #~~( IPG
