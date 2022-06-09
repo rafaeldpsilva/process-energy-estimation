@@ -1,3 +1,4 @@
+from multiprocessing.connection import Client 
 import pandas as pd
 import os
 
@@ -78,9 +79,10 @@ def dummy_sorting_alg(alg):
 		mergeSort(arr)
 
 def main():
-	f = open("reports/pid.txt", "w")
-	f.write(str(os.getpid()))
-	f.close()
+	address = ('localhost', 6000)
+	conn = Client(address, authkey=b'secret password')
+	conn.send(str(os.getpid()))
+	conn.close()
 	dummy_sorting_alg("stooge")
 
 if __name__ == "__main__":

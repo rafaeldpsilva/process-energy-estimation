@@ -1,4 +1,5 @@
 from multiprocessing import Process, Semaphore
+from multiprocessing.connection import Listener
 from utils import *
 import cmd
 import threading
@@ -9,34 +10,41 @@ import time
 import datetime
 
 powerlog_filename = 'reports/process.csv'
-process_filename = 'reports/report.txt'
+process_filename = 'reports/report.csv'
 nvidia_smi_filename = 'reports/nvidia.csv'
 pid_filename = 'reports/pid.txt'
 total_process_data = 'reports/total_process_data.csv'
 
 def process_cpu_usage(pid):
 
-    #TODO transformar a comunicação de ficheiros em comunicação em pipes
-
-    while pid == 0:
-        if os.path.exists(pid_filename):
-            with open(pid_filename) as f:
-                p = f.readline()
-                pid = int(p)
+    address = ('localhost', 6000)     # family is deduced to be 'AF_INET'
+    listener = Listener(address, authkey=b'secret password')
+    conn = listener.accept()
+    while True:
+        msg = conn.recv()
+        msg = int(msg)
+        if isinstance(msg, int):
+            pid = msg
+            conn.close()
+            break
+    listener.close() 
     
     process = psutil.Process(pid=pid)
+    f = open(process_filename, "w")
+    f.write("Time,Process CPU Usage(%)\n")
+    f.close()
     while True:
         try:
             f = open(process_filename, "a")
-            f.write(datetime.datetime.now().strftime("%H:%M:%S:%f")+ " " + str(process.cpu_percent(interval=0.05))+"\n")
+            f.write(datetime.datetime.now().strftime("%H:%M:%S:%f")+ ", " + str(process.cpu_percent(interval=0.05))+"\n")
             f.close()
         except:
-            os.remove(pid_filename)
+            #os.remove(pid_filename)
             return 0
 
 def join_process_data():
     powerlog_data = read_csv(powerlog_filename)
-    process_data = read_txt(process_filename)
+    process_data = read_csv(process_filename)
 
     system_time_in_microseconds = array_to_microseconds(powerlog_data['System Time'])
 
@@ -149,6 +157,7 @@ def estimate_dram_power_consumption(df):
 def main():
     initialize_files(powerlog_filename, process_filename, nvidia_smi_filename, pid_filename)
 
+    r, w = os.pipe()
     thread_cpu = Process(target = process_cpu_usage, args = (0, ))
     thread_cpu.start()
 
