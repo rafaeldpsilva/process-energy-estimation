@@ -3,14 +3,13 @@ import numpy as np
 import matplotlib.pyplot as plt
 import os
 
-def initialize_files(powerlog_filename, process_filename, nvidia_smi_filename, pid_filename):
-    #TODO transformar a comunicação de ficheiros em comunicação em pipes
-    if os.path.exists(pid_filename):
+def initialize_files(powerlog_filename, process_filename, nvidia_smi_filename):
+    if os.path.exists(powerlog_filename):
         os.remove(powerlog_filename)
-    f = open(process_filename, "w")
-    f.close()
-    f = open(nvidia_smi_filename, "w")
-    f.close()
+    if os.path.exists(process_filename):
+        os.remove(process_filename)
+    if os.path.exists(nvidia_smi_filename):
+        os.remove(nvidia_smi_filename)
   
 def find_nearest(array, value):
     array = np.asarray(array)
@@ -49,10 +48,12 @@ def plot_usage():
     plt.legend()
     plt.show()
 
-def print_results(elapsed_time,consumption):
+def print_results(elapsed_time,cpu_consumption,gpu_consumption,dram_consumption):
+    total_consumption = cpu_consumption + gpu_consumption+dram_consumption
     print("\nThe process lasted: " + str(elapsed_time) + " Seconds")
-    print("The process consumed: " + str(consumption) + " Watts")
-    print("The process consumed: " + str(round(consumption/elapsed_time,4)) + " Joules")
+    print("The process consumed: " + str(round(total_consumption,4)) + " Watts")
+    print("CPU: " + str(round(cpu_consumption,4)) + " Watts" + " | GPU: " + str(round(gpu_consumption,4)) + " Watts" + " | DRAM: " + str(round(dram_consumption,4)) + " Watts")
+    print("The process consumed: " + str(round(total_consumption/elapsed_time,4)) + " Joules")
 
 # format : 00:00:00:000
 def time_to_microsecs(string):
