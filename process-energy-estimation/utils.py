@@ -18,7 +18,7 @@ def find_nearest(array, value):
     return [idx,array[idx]]
 
 def read_csv(name):
-    data = pd.read_csv (name)  
+    data = pd.read_csv(name)  
     df = pd.DataFrame(data)
     df1 = df[:-14]
     return df1
@@ -59,20 +59,20 @@ def time_to_microsecs(string):
     hours = int(string[0:2]) * 3600000000
     minutes = int(string[3:5]) * 60000000 
     seconds = int(string[6:8]) * 1000000
-    microseconds = int(string [9:12] +  "00") + hours + minutes + seconds
+    microseconds = int(string [9:12]) + hours + minutes + seconds
     return microseconds
 
 # format : ????/??/?? ??:??:??.???
 def datatime_to_microsecs(string):
-    hours = int(string[11:13]) * 3600000000
+    hours = int(string[12:14]) * 3600000000
     minutes = int(string[15:17]) * 60000000 
     seconds = int(string[18:20]) * 1000000
-    microseconds = int(string [21:24] +  "00") + hours + minutes + seconds
+    microseconds = int(string [21:24]) + hours + minutes + seconds
     return microseconds
 
-def array_to_microseconds(array):
+def array_to_microseconds(array,function):
     array1 = []
     for line in array:
-        time = time_to_microsecs(line)
+        time = function(line)
         array1.append(time)
     return array1

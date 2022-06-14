@@ -12,12 +12,10 @@ import datetime
 powerlog_filename = 'reports/process.csv'
 process_filename = 'reports/report.csv'
 nvidia_smi_filename = 'reports/nvidia.csv'
-pid_filename = 'reports/pid.txt'
 total_process_data = 'reports/total_process_data.csv'
 
 def process_cpu_usage(pid):
-
-    address = ('localhost', 6000)     # family is deduced to be 'AF_INET'
+    address = ('localhost', 6000)
     listener = Listener(address, authkey=b'secret password')
     conn = listener.accept()
     while True:
@@ -45,57 +43,32 @@ def process_cpu_usage(pid):
 def join_process_data():
     powerlog_data = read_csv(powerlog_filename)
     process_data = read_csv(process_filename)
-
-    system_time_in_microseconds = array_to_microseconds(powerlog_data['System Time'])
-
-    df = pd.DataFrame([], columns =['System Time','Elapsed Time (sec)',' CPU Utilization(%)','Processor Power_0(Watt)'])
-
-    length = len(process_data['Time'])
-    i = 0
-    SYSTEM_TIME = 0
-    ELAPSED_TIME = 2
-    CPU_UTILIZATION = 3
-    PROCESSOR_POWER = 5
-
-    while i < length:
-        time = time_to_microsecs(process_data['Time'].iloc[i])
-        [idx,value] = find_nearest(system_time_in_microseconds,time)
-        #TODO trocar powerlog_data para process_data
-        df = pd.concat([df,powerlog_data.iloc[[idx],[SYSTEM_TIME,ELAPSED_TIME,CPU_UTILIZATION,PROCESSOR_POWER]]], ignore_index = True, axis = 0)
-        i += 1
-    
-    cpu_df = pd.DataFrame(process_data, columns=['Time', 'Process CPU Usage(%)'])
-    return pd.concat([df,cpu_df], axis = 1)
-
-def join_gpu_data(powerlog_data):
     gpu_data = read_csv(nvidia_smi_filename)
-    
-    system_time_in_microseconds = array_to_microseconds(powerlog_data['System Time'])
-
-    data = pd.DataFrame([], columns =['System Time','Elapsed Time (sec)',' CPU Utilization(%)','Processor Power_0(Watt)', 'Time', 'Process CPU Usage(%)'])
-
-    SYSTEM_TIME = 0
-    ELAPSED_TIME = 1
-    CPU_UTILIZATION = 2
-    PROCESSOR_POWER = 3
-    PROCESS_TIME = 4
-    PROCESS_CPU_USAGE = 5
+    gpu_data.columns = ['index','timestamp','power.draw [W]']
+    cpu_time_in_microseconds = array_to_microseconds(process_data['Time'],time_to_microsecs)
+    gpu_time_in_microseconds = array_to_microseconds(gpu_data['timestamp'],datatime_to_microsecs)
+    cpu_df = pd.DataFrame([], columns =['Time', 'Process CPU Usage(%)'])
+    gpu_df = pd.DataFrame([], columns =['timestamp'])
 
     power_draw = []
-    length = len(gpu_data[' timestamp'])
+    length = len(powerlog_data['System Time'])
     i = 0
     while i < length:
-        power_draw.append(gpu_data[' power.draw [W]'].iloc[i][:-2]) #remove "W" character
+        time = time_to_microsecs(powerlog_data['System Time'].iloc[i])
+        [cpu_idx,value] = find_nearest(cpu_time_in_microseconds,time)
+        [gpu_idx,value_gpu] = find_nearest(gpu_time_in_microseconds,time)
+        cpu_df = pd.concat([cpu_df,process_data.iloc[[cpu_idx],[0,1]]], ignore_index = True, axis = 0)
+        
+        power_draw.append(gpu_data['power.draw [W]'].iloc[i][:-2])
 
-        time = datatime_to_microsecs(gpu_data[' timestamp'].iloc[i])
-        [idx,value] = find_nearest(system_time_in_microseconds,time)
-        #TODO trocar powerlog_data para gpu_data
-        data = pd.concat([data,powerlog_data.iloc[[idx],[SYSTEM_TIME,ELAPSED_TIME,CPU_UTILIZATION,PROCESSOR_POWER,PROCESS_TIME,PROCESS_CPU_USAGE]]], ignore_index = True, axis = 0)
+        gpu_df = pd.concat([gpu_df,gpu_data.iloc[[gpu_idx],[1]]], ignore_index = True, axis = 0)
         i += 1
     
-    gpu_df = pd.DataFrame(gpu_data, columns=[' timestamp'])
-    gpu_df['power.draw [W]'] = power_draw
-    return pd.concat([data,gpu_df], axis = 1)
+    df = pd.DataFrame(powerlog_data, columns=['System Time','Elapsed Time (sec)',' CPU Utilization(%)','Processor Power_0(Watt)'])
+    df = pd.concat([df, cpu_df], axis = 1)
+    power_draw_df = pd.DataFrame(power_draw, columns =['power.draw [W]'])
+    gpu_df = pd.concat([gpu_df, power_draw_df], axis = 1)
+    return pd.concat([df, gpu_df], axis = 1)    
 
 def estimate_process_power_consumption(df):
     cpu_wattage_sum = 0
@@ -126,7 +99,7 @@ def estimate_gpu_power_consumption(df):
     gpu_process_power = []
 
     #Estimar energia do cpu
-    length = len(df[' timestamp'])
+    length = len(df['timestamp'])
     while i < length:
         gpu_power = float(df['power.draw [W]'].iloc[i])
         gpu_process_power.append(gpu_power)
@@ -143,7 +116,7 @@ def estimate_dram_power_consumption(df):
     gpu_process_power = []
 
     #Estimar energia do cpu
-    length = len(df[' timestamp'])
+    length = len(df['timestamp'])
     while i < length:
         gpu_power = float(df['power.draw [W]'].iloc[i])
         gpu_process_power.append(gpu_power)
@@ -155,9 +128,8 @@ def estimate_dram_power_consumption(df):
     return average_gpu_wattage
 
 def main():
-    initialize_files(powerlog_filename, process_filename, nvidia_smi_filename, pid_filename)
+    """  initialize_files(powerlog_filename, process_filename, nvidia_smi_filename, pid_filename)
 
-    r, w = os.pipe()
     thread_cpu = Process(target = process_cpu_usage, args = (0, ))
     thread_cpu.start()
 
@@ -166,21 +138,20 @@ def main():
     
     thread_cpu.join()
 
-    cmd.kill_process(pid)
-
+    cmd.kill_process(pid) """
+    
     process_df = join_process_data()
-    total_process_df = join_gpu_data(process_df)
 
-    [cpu_consumption,total_process_df] = estimate_process_power_consumption(total_process_df)
-    gpu_consumption = estimate_gpu_power_consumption(total_process_df)
-    dram_consumption = estimate_dram_power_consumption(total_process_df)
+    [cpu_consumption,process_df] = estimate_process_power_consumption(process_df)
+    gpu_consumption = estimate_gpu_power_consumption(process_df)
+    dram_consumption = estimate_dram_power_consumption(process_df)
 
-    elapsed_time = total_process_df['Elapsed Time (sec)'].iloc[-1]
+    elapsed_time = process_df['Elapsed Time (sec)'].iloc[-1]
     
     total_consumption = cpu_consumption + gpu_consumption + dram_consumption
     print_results(elapsed_time,total_consumption)
     
-    total_process_df.to_csv('reports/total_process_data.csv')
+    process_df.to_csv('reports/total_process_data.csv')
 
 if __name__ == '__main__':
     main()
