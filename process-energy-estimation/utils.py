@@ -53,7 +53,7 @@ def print_results(elapsed_time,cpu_consumption,gpu_consumption,dram_consumption)
     print("\nThe process lasted: " + str(elapsed_time) + " Seconds")
     print("The process consumed: " + str(round(total_consumption,4)) + " Watts")
     print("CPU: " + str(round(cpu_consumption,4)) + " Watts" + " | GPU: " + str(round(gpu_consumption,4)) + " Watts" + " | DRAM: " + str(round(dram_consumption,4)) + " Watts")
-    print("The process consumed: " + str(round(total_consumption/elapsed_time,4)) + " Joules")
+    print("The process consumed: " + str(round(total_consumption * elapsed_time,4)) + " Joules")
 
 # format : 00:00:00:000
 def time_to_microsecs(string):
