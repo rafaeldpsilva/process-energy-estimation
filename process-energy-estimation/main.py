@@ -9,12 +9,7 @@ import pandas as pd
 import time
 import datetime
 
-powerlog_filename = 'reports/process.csv'
-process_filename = 'reports/report.csv'
-nvidia_smi_filename = 'reports/nvidia.csv'
-total_process_data = 'reports/total_process_data.csv'
-
-def process_cpu_usage(pid):
+def process_cpu_usage(process_filename, pid):
     cpu_count = psutil.cpu_count()/2
     address = ('localhost', 6000)
     listener = Listener(address, authkey=b'secret password')
@@ -42,7 +37,7 @@ def process_cpu_usage(pid):
         except:
             return 0
 
-def join_process_data():
+def join_process_data(powerlog_filename, process_filename, nvidia_smi_filename):
     powerlog_data = read_csv(powerlog_filename)
     process_data = read_csv(process_filename)
     gpu_data = read_csv(nvidia_smi_filename)
@@ -72,7 +67,7 @@ def join_process_data():
     gpu_df = pd.concat([gpu_df, power_draw_df], axis = 1)
     return pd.concat([df, gpu_df], axis = 1)    
 
-def estimate_process_power_consumption(df):
+def estimate_cpu_power_consumption(df):
     cpu_wattage_sum = 0
     i = 0
     process_power = []
@@ -130,9 +125,13 @@ def estimate_dram_power_consumption(df):
     return average_dram_wattage
 
 def main():
+    powerlog_filename = 'reports/powerlog.csv'
+    process_filename = 'reports/process.csv'
+    nvidia_smi_filename = 'reports/nvidia.csv'
+    total_process_data = 'reports/total_process_data.csv'
     initialize_files(powerlog_filename, process_filename, nvidia_smi_filename)
 
-    thread_cpu = Process(target = process_cpu_usage, args = (0, ))
+    thread_cpu = Process(target = process_cpu_usage, args = (process_filename, 0, ))
     thread_cpu.start()
 
     pid = cmd.get_gpu_report("nvidia", 100)
@@ -142,9 +141,10 @@ def main():
 
     cmd.kill_process(pid)
     
-    process_df = join_process_data()
+    process_df = join_process_data(powerlog_filename, process_filename, nvidia_smi_filename)
 
-    [mean_cpu_consumption,process_df] = estimate_process_power_consumption(process_df)
+    #TODO Correção para cálculo cumulativo
+    [mean_cpu_consumption,process_df] = estimate_cpu_power_consumption(process_df)
     mean_gpu_consumption = estimate_gpu_power_consumption(process_df)
     mean_dram_consumption = estimate_dram_power_consumption(process_df)
 
