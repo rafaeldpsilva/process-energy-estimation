@@ -1,14 +1,18 @@
 @startuml
 component System{
-    component "Sistema" as SYS
+    component "main" as MAIN
+    component "cmd" as CMD
+    component "utils" as UTILS
     component "Modelo de Previsão" as MOD
 }
 
 interface "Intel Power Gadget" as IPG
 interface "NVIDIA System Management Interface" as NSMI
 
-SYS -- MOD
-SYS #~~( IPG
-SYS #~~( NSMI
+CMD -- MAIN
+MAIN -- UTILS
+IPG -- MOD
+CMD #~~( IPG
+CMD #~~( NSMI
 
 @enduml

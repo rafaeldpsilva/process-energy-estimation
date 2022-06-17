@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" contentStyleType="text/css" height="231px" preserveAspectRatio="none" style="width:594px;height:231px;background:#FFFFFF;" version="1.1" viewBox="0 0 594 231" width="594px" zoomAndPan="magnify"><defs/><g><!--MD5=[3dd69bb3697220fad5d33898126635a8]
+cluster Server@GECAD--><g id="cluster_Server@GECAD"><polygon points="16,16,26,6,577,6,577,204,567,214,16,214,16,16" style="stroke:#181818;stroke-width:1.0;fill:none;"/><line style="stroke:#181818;stroke-width:1.0;fill:none;" x1="567" x2="577" y1="16" y2="6"/><line style="stroke:#181818;stroke-width:1.0;fill:none;" x1="16" x2="567" y1="16" y2="16"/><line style="stroke:#181818;stroke-width:1.0;fill:none;" x1="567" x2="567" y1="16" y2="214"/><text fill="#000000" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacing" textLength="118" x="233.5" y="31.9951">Server@GECAD</text></g><!--MD5=[52ec6a8b74b13041fc2aa09119826c6e]
+entity Sistema--><g id="elem_Sistema"><polygon fill="#F1F1F1" points="213,56,223,46,311,46,311,82.2969,301,92.2969,213,92.2969,213,56" style="stroke:#181818;stroke-width:0.5;"/><line style="stroke:#181818;stroke-width:0.5;" x1="301" x2="311" y1="56" y2="46"/><line style="stroke:#181818;stroke-width:0.5;" x1="213" x2="301" y1="56" y2="56"/><line style="stroke:#181818;stroke-width:0.5;" x1="301" x2="301" y1="56" y2="92.2969"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="58" x="228" y="78.9951">Sistema</text></g><!--MD5=[d420a9cf64d6b545f3755253952b3c16]
+entity IPG--><g id="elem_IPG"><polygon fill="#F1F1F1" points="32,162,42,152,210,152,210,188.2969,200,198.2969,32,198.2969,32,162" style="stroke:#181818;stroke-width:0.5;"/><line style="stroke:#181818;stroke-width:0.5;" x1="200" x2="210" y1="162" y2="152"/><line style="stroke:#181818;stroke-width:0.5;" x1="32" x2="200" y1="162" y2="162"/><line style="stroke:#181818;stroke-width:0.5;" x1="200" x2="200" y1="162" y2="198.2969"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="138" x="47" y="184.9951">Intel Power Gadget</text></g><!--MD5=[1b6f34fe2510f2f714dae0aab426a88b]
+entity NSMI--><g id="elem_NSMI"><polygon fill="#F1F1F1" points="245.5,162,255.5,152,560.5,152,560.5,188.2969,550.5,198.2969,245.5,198.2969,245.5,162" style="stroke:#181818;stroke-width:0.5;"/><line style="stroke:#181818;stroke-width:0.5;" x1="550.5" x2="560.5" y1="162" y2="152"/><line style="stroke:#181818;stroke-width:0.5;" x1="245.5" x2="550.5" y1="162" y2="162"/><line style="stroke:#181818;stroke-width:0.5;" x1="550.5" x2="550.5" y1="162" y2="198.2969"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="275" x="260.5" y="184.9951">NVIDIA System Management Interface</text></g><!--MD5=[0c3cd1c150f43839693f7007a453643c]
+link Sistema to IPG--><g id="link_Sistema_IPG"><path d="M232.098,92.056 C208.169,109.705 174.776,134.3353 150.859,151.9761 " fill="none" id="Sistema-IPG" style="stroke:#181818;stroke-width:1.0;"/></g><!--MD5=[c5eead0968757ea9e2005a45e219e9bd]
+link Sistema to NSMI--><g id="link_Sistema_NSMI"><path d="M291.902,92.056 C315.831,109.705 349.224,134.3353 373.141,151.9761 " fill="none" id="Sistema-NSMI" style="stroke:#181818;stroke-width:1.0;"/></g><!--MD5=[7191e29ed4b8ea58b0e87729dc1c84e0]
+@startuml
+node Server@GECAD{
+    node Sistema
+    node "Intel Power Gadget" as IPG
+    node "NVIDIA System Management Interface" as NSMI
+}
+
+Sistema - - IPG
+Sistema - - NSMI
+@enduml
+
+PlantUML version 1.2022.6beta5(Unknown compile time)
+(GPL source distribution)
+Java Runtime: Java(TM) SE Runtime Environment
+JVM: Java HotSpot(TM) 64-Bit Server VM
+Default Encoding: UTF-8
+Language: en
+Country: US
+--></g></svg>

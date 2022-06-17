@@ -1,8 +1,0 @@
-@startuml
-node Server@GECAD{
-    component System
-    component ExternalSoftware
-}
-
-System -- ExternalSoftware
-@enduml
