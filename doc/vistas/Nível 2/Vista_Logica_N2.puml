@@ -1,0 +1,16 @@
+@startuml
+component Sistema{
+    component "Scripts" as SYS
+    
+}
+
+interface "Intel Power Gadget" as IPG
+interface "NVIDIA System Management Interface" as NSMI
+component "Modelo de Previsão" as MP
+
+Sistema -- MP
+MP -- IPG
+Sistema #~~( IPG
+Sistema #~~( NSMI
+
+@enduml

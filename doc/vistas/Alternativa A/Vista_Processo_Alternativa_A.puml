@@ -1,0 +1,25 @@
+@startuml
+
+participant "Scripts" as SC
+participant "energyusage" as IPG
+participant "Modelo de Previsão" as MP
+
+activate SC
+
+SC -> IPG: evaluate(run_modelo_previsao, pdf=True)
+activate IPG
+
+IPG -> SC : run_modelo_previsao()
+
+SC -> MP**: run
+activate MP
+MP ->MP
+
+deactivate MP
+
+IPG -> IPG
+deactivate IPG
+
+SC -> SC: mostra resultados na consola
+
+@enduml

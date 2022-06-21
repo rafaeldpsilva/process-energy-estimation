@@ -1,0 +1,31 @@
+@startuml
+
+participant "Scripts" as SC
+participant "Intel Power Gadget" as IPG
+participant "Nvidia System Management Interface" as SMI
+participant "Modelo de Previsão" as MP
+
+activate SC
+
+SC -> SMI : registar dados da GPU
+activate SMI
+
+SC -> IPG: registar dados do CPU e DRAM
+activate IPG
+
+IPG -> MP: iniciar execução
+activate MP
+
+loop 
+SC -> SC: registar uso do processo no CPU
+end loop
+
+deactivate MP
+deactivate IPG
+deactivate SMI
+
+
+SC -> SC: registar dados de cada componente 
+SC -> SC: estimar e registar energia consumida
+
+@enduml

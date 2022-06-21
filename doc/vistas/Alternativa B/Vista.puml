@@ -1,0 +1,12 @@
+@startuml
+node Server@GECAD{
+    component "Scripts" as SYS
+    component "Modelo de Previsão" as MP
+}
+
+node Arduino@GECAD{
+    component "Script de Leitura" as ARD
+}
+ARD -- SYS: http/s
+SYS -- MP
+@enduml

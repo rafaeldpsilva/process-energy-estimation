@@ -1,10 +1,12 @@
 @startuml
+
 node Server@GECAD{
     node Sistema
+    node "Modelo de Previsão" as MP
     node "Intel Power Gadget" as IPG
     node "NVIDIA System Management Interface" as NSMI
 }
-
+Sistema -- MP
 Sistema -- IPG
 Sistema -- NSMI
 @enduml

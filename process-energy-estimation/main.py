@@ -56,7 +56,7 @@ def join_process_data(powerlog_filename, process_filename, nvidia_smi_filename):
         [gpu_idx,value_gpu] = find_nearest(gpu_time_in_microseconds,time)
         cpu_df = pd.concat([cpu_df,process_data.iloc[[cpu_idx],[0,1]]], ignore_index = True, axis = 0)
         
-        power_draw.append(gpu_data['power.draw [W]'].iloc[i][:-2])
+        power_draw.append(gpu_data['power.draw [W]'].iloc[gpu_idx][:-2])
 
         gpu_df = pd.concat([gpu_df,gpu_data.iloc[[gpu_idx],[1]]], ignore_index = True, axis = 0)
         i += 1
@@ -135,7 +135,8 @@ def main():
     thread_cpu.start()
 
     pid = cmd.get_gpu_report("nvidia", 100)
-    cmd.get_powerlog_report("process",'"python sorting_algorithms.py"')
+
+    cmd.get_powerlog_report("powerlog",'"python sorting_algorithms.py"')
     
     thread_cpu.join()
 

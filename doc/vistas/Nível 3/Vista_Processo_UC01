@@ -1,0 +1,68 @@
+@startuml
+
+participant "main" as MAIN
+participant "utils" as UTILS
+participant "Thread" as THRD
+participant "cmd" as CMD
+participant "Intel Power Gadget" as IPG
+participant "Nvidia System Management Interface" as SMI
+participant "Modelo de Previsão" as MP
+activate MAIN
+MAIN -> UTILS: initialize_files()
+activate UTILS
+deactivate UTILS
+
+MAIN -> THRD**: create(target = process_cpu_usage, args = 0)
+
+MAIN-> CMD: gpu_pid = get_gpu_report(filename, interval)
+activate CMD
+CMD -> SMI** : nvidia-smi --query-gpu=timestamp,power.draw -lms interval >> filename.csv
+activate SMI
+deactivate CMD
+
+MAIN -> THRD: start()
+activate THRD
+
+loop while = TRUE
+THRD -> THRD: pid = listener.recv()
+end loop
+
+
+MAIN -> CMD: get_process_report(save_file_name, command)
+activate CMD
+CMD -> IPG**: powerlog.exe -file save_file_name -cmd command
+activate IPG
+IPG -> MP**: inicia a execução
+activate MP
+
+MP -> MP: pid = os.getpid()
+MP -> MP: conn.send(pid)
+
+MP --> THRD: pid
+loop 
+THRD -> THRD: get_cpu_percentage(pid)
+end loop 
+
+deactivate MP
+deactivate IPG
+deactivate CMD
+
+MAIN -> THRD : join()
+deactivate THRD
+
+MAIN -> CMD: kill_process(gpu_pid)
+activate CMD
+CMD -> SMI: kill(SEGKILL)
+deactivate SMI
+deactivate CMD
+
+
+MAIN -> MAIN: estimate_process_cpu_consumption()
+MAIN -> MAIN: estimate_process_dram_consumption()
+MAIN -> MAIN: estimate_process_gpu_consumption()
+
+MAIN -> MAIN: estimate_process_power_consumption()
+
+MAIN -> MAIN: save_results()
+
+@enduml

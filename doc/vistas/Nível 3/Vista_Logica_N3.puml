@@ -1,17 +1,21 @@
 @startuml
-component System{
+
+component Sistema{
     component "main" as MAIN
     component "cmd" as CMD
     component "utils" as UTILS
-    component "Modelo de Previsão" as MOD
 }
+
+component "Modelo de Previsão" as MOD
 
 interface "Intel Power Gadget" as IPG
 interface "NVIDIA System Management Interface" as NSMI
 
 CMD -- MAIN
 MAIN -- UTILS
-IPG -- MOD
+
+MAIN ~~ MOD
+MOD ~~ IPG
 CMD #~~( IPG
 CMD #~~( NSMI
 
