@@ -41,7 +41,7 @@ def plot_power(df):
     plt.legend()
     plt.show()
 
-def plot_usage():
+def plot_usage(df):
     plt.plot(df['Elapsed Time (sec)'], df['Process CPU Usage(%)'], label='Process CPU Usage(%)')
     plt.plot(df['Elapsed Time (sec)'], df[' CPU Utilization(%)'], label='CPU Utilization(%)')
     plt.ylim([0,110])

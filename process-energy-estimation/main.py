@@ -155,5 +155,7 @@ def main():
     
     process_df.to_csv('reports/total_process_data.csv')
 
+    plot_power(process_df)
+
 if __name__ == '__main__':
     main()
