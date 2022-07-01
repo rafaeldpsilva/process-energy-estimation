@@ -1,0 +1,7 @@
+{
+    "POWERLOG_FILENAME" : "./reports/powerlog.csv",
+    "PROCESS_FILENAME" : "./reports/process.csv",
+    "NVIDIA_SMI_FILENAME" : "./reports/nvidia.csv",
+    "TOTAL_PROCESS_DATA" : "./reports/total_process_data.csv",
+    "INTERVAL" : 100
+}

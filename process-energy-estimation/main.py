@@ -125,16 +125,21 @@ def estimate_dram_power_consumption(df):
     return average_dram_wattage
 
 def main():
-    powerlog_filename = 'reports/powerlog.csv'
-    process_filename = 'reports/process.csv'
-    nvidia_smi_filename = 'reports/nvidia.csv'
-    total_process_data = 'reports/total_process_data.csv'
+    with open("./configuration.json") as json_file:
+        configuration = json.load(json_file)
+    
+    powerlog_filename = configuration['POWERLOG_FILENAME']
+    process_filename = configuration['PROCESS_FILENAME']
+    nvidia_smi_filename = configuration['NVIDIA_SMI_FILENAME']
+    total_process_data = configuration['TOTAL_PROCESS_DATA']
+    interval = configuration['INTERVAL']
+    
     initialize_files(powerlog_filename, process_filename, nvidia_smi_filename)
 
     thread_cpu = Process(target = process_cpu_usage, args = (process_filename, 0, ))
     thread_cpu.start()
 
-    pid = cmd.get_gpu_report("nvidia", 100)
+    pid = cmd.get_gpu_report("nvidia", interval)
 
     cmd.get_powerlog_report("powerlog",'"python sorting_algorithms.py"')
     
