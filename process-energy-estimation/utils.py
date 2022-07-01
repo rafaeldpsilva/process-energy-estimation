@@ -75,12 +75,12 @@ def plot_usage(df):
     plt.legend()
     plt.show()
 
-def print_results(elapsed_time,cpu_consumption,gpu_consumption,dram_consumption,cumulative_dram_energy):
+def print_results(elapsed_time,cpu_consumption,gpu_consumption,dram_consumption,dram_energy):
     total_consumption = cpu_consumption + gpu_consumption+dram_consumption
     print("\nThe process lasted: " + str(elapsed_time) + " Seconds")
     print("The process consumed: " + str(round(total_consumption,4)) + " Watts")
     print("CPU: " + str(round(cpu_consumption,4)) + " Watts" + " | GPU: " + str(round(gpu_consumption,4)) + " Watts" + " | DRAM: " + str(round(dram_consumption,4)) + " Watts")
-    total_consumption = (cpu_consumption + gpu_consumption) * elapsed_time + cumulative_dram_energy
+    total_consumption = (cpu_consumption + gpu_consumption) * elapsed_time + dram_energy
     print("The process consumed: " + str(round(total_consumption,4)) + " Joules")
 
 # format : 00:00:00:000

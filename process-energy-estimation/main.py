@@ -157,11 +157,11 @@ def main():
 
     [mean_cpu_consumption,process_df] = estimate_cpu_power_consumption(process_df)
     mean_gpu_consumption = estimate_gpu_power_consumption(nvidia_smi_filename)
-    [mean_dram_consumption,cumulative_dram_energy] = estimate_dram_power_consumption(process_df)
+    [mean_dram_consumption,dram_energy] = estimate_dram_power_consumption(process_df)
 
     elapsed_time = process_df['Elapsed Time (sec)'].iloc[-1]
     
-    print_results(elapsed_time,mean_cpu_consumption,mean_gpu_consumption,mean_dram_consumption,cumulative_dram_energy)
+    print_results(elapsed_time,mean_cpu_consumption,mean_gpu_consumption,mean_dram_consumption,dram_energy)
     
     process_df.to_csv('reports/total_process_data.csv')
 
