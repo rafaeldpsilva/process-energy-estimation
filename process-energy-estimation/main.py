@@ -8,6 +8,7 @@ import subprocess, os, signal
 import pandas as pd
 import time
 import datetime
+import json
 
 def process_cpu_usage(process_filename, pid):
     cpu_count = psutil.cpu_count()/2
@@ -56,15 +57,18 @@ def join_process_data(powerlog_filename, process_filename, nvidia_smi_filename):
         [gpu_idx,value_gpu] = find_nearest(gpu_time_in_microseconds,time)
         cpu_df = pd.concat([cpu_df,process_data.iloc[[cpu_idx],[0,1]]], ignore_index = True, axis = 0)
         
-        power_draw.append(gpu_data['power.draw [W]'].iloc[gpu_idx][:-2])
+        p = gpu_data['power.draw [W]'].iloc[gpu_idx][:-2]
+        power_draw.append(float(p.strip()))
 
         gpu_df = pd.concat([gpu_df,gpu_data.iloc[[gpu_idx],[1]]], ignore_index = True, axis = 0)
+        
         i += 1
     
     df = pd.DataFrame(powerlog_data, columns=['System Time','Elapsed Time (sec)',' CPU Utilization(%)','Processor Power_0(Watt)','DRAM Power_0(Watt)','Cumulative DRAM Energy_0(Joules)'])
     df = pd.concat([df, cpu_df], axis = 1)
     power_draw_df = pd.DataFrame(power_draw, columns =['power.draw [W]'])
     gpu_df = pd.concat([gpu_df, power_draw_df], axis = 1)
+    gpu_df.to_csv('reports/gpu.csv')
     return pd.concat([df, gpu_df], axis = 1)    
 
 def estimate_cpu_power_consumption(df):
@@ -90,15 +94,17 @@ def estimate_cpu_power_consumption(df):
     
     return [average_cpu_wattage, df1]
 
-def estimate_gpu_power_consumption(df):
+def estimate_gpu_power_consumption(nvidia_smi_filename):
+    gpu_df = read_nvidia_smi_file(nvidia_smi_filename)
+
     gpu_wattage_sum = 0
     i = 0
     gpu_process_power = []
 
-    #Estimar energia do cpu
-    length = len(df['timestamp'])
+    #Estimar energia da gpu
+    length = len(gpu_df['power.draw [W]'])
     while i < length:
-        gpu_power = float(df['power.draw [W]'].iloc[i])
+        gpu_power = float(gpu_df['power.draw [W]'].iloc[i])
         gpu_process_power.append(gpu_power)
         gpu_wattage_sum += gpu_power
         i += 1
@@ -121,8 +127,8 @@ def estimate_dram_power_consumption(df):
         i += 1
     
     average_dram_wattage = dram_wattage_sum/i
-    
-    return average_dram_wattage
+    cumulative_dram_energy = df['Cumulative DRAM Energy_0(Joules)'].iloc[-1]
+    return [average_dram_wattage,cumulative_dram_energy]
 
 def main():
     with open("./configuration.json") as json_file:
@@ -133,7 +139,7 @@ def main():
     nvidia_smi_filename = configuration['NVIDIA_SMI_FILENAME']
     total_process_data = configuration['TOTAL_PROCESS_DATA']
     interval = configuration['INTERVAL']
-    
+
     initialize_files(powerlog_filename, process_filename, nvidia_smi_filename)
 
     thread_cpu = Process(target = process_cpu_usage, args = (process_filename, 0, ))
@@ -149,18 +155,15 @@ def main():
     
     process_df = join_process_data(powerlog_filename, process_filename, nvidia_smi_filename)
 
-    #TODO Correção para cálculo cumulativo
     [mean_cpu_consumption,process_df] = estimate_cpu_power_consumption(process_df)
-    mean_gpu_consumption = estimate_gpu_power_consumption(process_df)
-    mean_dram_consumption = estimate_dram_power_consumption(process_df)
+    mean_gpu_consumption = estimate_gpu_power_consumption(nvidia_smi_filename)
+    [mean_dram_consumption,cumulative_dram_energy] = estimate_dram_power_consumption(process_df)
 
     elapsed_time = process_df['Elapsed Time (sec)'].iloc[-1]
     
-    print_results(elapsed_time,mean_cpu_consumption,mean_gpu_consumption,mean_dram_consumption)
+    print_results(elapsed_time,mean_cpu_consumption,mean_gpu_consumption,mean_dram_consumption,cumulative_dram_energy)
     
     process_df.to_csv('reports/total_process_data.csv')
-
-    plot_power(process_df)
 
 if __name__ == '__main__':
     main()
