@@ -155,10 +155,23 @@ def main():
     
     process_df = join_process_data(powerlog_filename, process_filename, nvidia_smi_filename)
 
-    [mean_cpu_consumption,process_df] = estimate_cpu_power_consumption(process_df)
-    mean_gpu_consumption = estimate_gpu_power_consumption(nvidia_smi_filename)
-    [mean_dram_consumption,dram_energy] = estimate_dram_power_consumption(process_df)
-
+    cpu_on = configuration['CPU']
+    if(cpu_on):
+        [mean_cpu_consumption,process_df] = estimate_cpu_power_consumption(process_df)
+    else:
+        mean_cpu_consumption = 0
+    gpu_on = configuration['GPU']
+    if(gpu_on):
+        mean_gpu_consumption = estimate_gpu_power_consumption(nvidia_smi_filename)
+    else:
+        mean_gpu_consumption = 0
+    dram_on = configuration['DRAM']
+    if(dram_on):
+        [mean_dram_consumption,dram_energy] = estimate_dram_power_consumption(process_df)
+    else:
+        mean_dram_consumption = 0
+        dram_energy = 0
+    
     elapsed_time = process_df['Elapsed Time (sec)'].iloc[-1]
     
     print_results(elapsed_time,mean_cpu_consumption,mean_gpu_consumption,mean_dram_consumption,dram_energy)

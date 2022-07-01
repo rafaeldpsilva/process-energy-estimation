@@ -3,5 +3,8 @@
     "PROCESS_FILENAME" : "./reports/process.csv",
     "NVIDIA_SMI_FILENAME" : "./reports/nvidia.csv",
     "TOTAL_PROCESS_DATA" : "./reports/total_process_data.csv",
-    "INTERVAL" : 100
+    "INTERVAL" : 100,
+    "CPU": 0,
+    "GPU": 0,
+    "DRAM": 1
 }
