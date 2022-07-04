@@ -68,7 +68,7 @@ def join_process_data(powerlog_filename, process_filename, nvidia_smi_filename):
     df = pd.concat([df, cpu_df], axis = 1)
     power_draw_df = pd.DataFrame(power_draw, columns =['power.draw [W]'])
     gpu_df = pd.concat([gpu_df, power_draw_df], axis = 1)
-    gpu_df.to_csv('reports/gpu.csv')
+    #gpu_df.to_csv('process-energy-estimation/reports/gpu.csv')
     return pd.concat([df, gpu_df], axis = 1)    
 
 def estimate_cpu_power_consumption(df):
@@ -131,9 +131,10 @@ def estimate_dram_power_consumption(df):
     return [average_dram_wattage,cumulative_dram_energy]
 
 def main():
-    with open("./configuration.json") as json_file:
+    with open("./process-energy-estimation/configuration.json") as json_file:
         configuration = json.load(json_file)
     
+    command = configuration['COMMAND']
     powerlog_filename = configuration['POWERLOG_FILENAME']
     process_filename = configuration['PROCESS_FILENAME']
     nvidia_smi_filename = configuration['NVIDIA_SMI_FILENAME']
@@ -145,9 +146,9 @@ def main():
     thread_cpu = Process(target = process_cpu_usage, args = (process_filename, 0, ))
     thread_cpu.start()
 
-    pid = cmd.get_gpu_report("nvidia", interval)
+    pid = cmd.get_gpu_report(nvidia_smi_filename, interval)
 
-    cmd.get_powerlog_report("powerlog",'"python sorting_algorithms.py"')
+    cmd.get_powerlog_report(powerlog_filename, command)
     
     thread_cpu.join()
 
@@ -176,7 +177,7 @@ def main():
     
     print_results(elapsed_time,mean_cpu_consumption,mean_gpu_consumption,mean_dram_consumption,dram_energy)
     
-    process_df.to_csv('reports/total_process_data.csv')
+    process_df.to_csv(total_process_data)
 
 if __name__ == '__main__':
     main()

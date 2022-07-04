@@ -1,0 +1,11 @@
+{
+    "COMMAND" : "python sorting_algorithms.py", 
+    "POWERLOG_FILENAME" : "./process-energy-estimation/reports/powerlog.csv",
+    "PROCESS_FILENAME" : "./process-energy-estimation/reports/process.csv",
+    "NVIDIA_SMI_FILENAME" : "./process-energy-estimation/reports/nvidia.csv",
+    "TOTAL_PROCESS_DATA" : "./process-energy-estimation/reports/total_process_data.csv",
+    "INTERVAL" : 100,
+    "CPU": 1,
+    "GPU": 0,
+    "DRAM": 1
+}

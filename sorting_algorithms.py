@@ -74,7 +74,7 @@ def dummy_sorting_alg(alg):
 	arr = data['carbon_intensity_production_avg'].tolist()
 	if alg == "stooge":
 		n = len(arr)
-		stoogesort(arr, 0, 1000)
+		stoogesort(arr, 0, 500)
 	else:
 		mergeSort(arr)
 
