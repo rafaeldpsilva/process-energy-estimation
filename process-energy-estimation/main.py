@@ -11,6 +11,8 @@ import datetime
 import json
 
 def process_cpu_usage(process_filename, pid):
+    """Registers the cpu usage of the process with given pid on the specified file."""
+
     cpu_count = psutil.cpu_count()/2
     address = ('localhost', 6000)
     listener = Listener(address, authkey=b'secret password')
@@ -39,9 +41,11 @@ def process_cpu_usage(process_filename, pid):
             return 0
 
 def join_process_data(powerlog_filename, process_filename, nvidia_smi_filename):
-    powerlog_data = read_csv(powerlog_filename)
-    process_data = read_csv(process_filename)
-    gpu_data = read_csv(nvidia_smi_filename)
+    """Merges the three csv files on a pandas dataframe."""
+
+    powerlog_data = read_powerlog_file(powerlog_filename)
+    process_data = read_csv_file(process_filename)
+    gpu_data = read_csv_file(nvidia_smi_filename)
     gpu_data.columns = ['index','timestamp','power.draw [W]']
     cpu_time_in_microseconds = array_to_microseconds(process_data['Time'],time_to_microsecs)
     gpu_time_in_microseconds = array_to_microseconds(gpu_data['timestamp'],datatime_to_microsecs)
@@ -72,11 +76,18 @@ def join_process_data(powerlog_filename, process_filename, nvidia_smi_filename):
     return pd.concat([df, gpu_df], axis = 1)    
 
 def estimate_cpu_power_consumption(df):
+    """Estimates the average cpu power consumption of the process by multiplying 
+    the cpu usage of the process by the total cpu power consumption. It uses the 
+    dataframe returned by join_process_data function so the rows from the cpu pr
+    ocess usage matches the right cpu total power consumption rows. This functio
+    n also returns a new dataframe with the same information present in the give
+    n dataframe and an added column with the cpu process power consumption at a 
+    given moment."""
+
     cpu_wattage_sum = 0
     i = 0
     process_power = []
 
-    #Estimar energia do cpu
     length = len(df['Time'])
     while i < length:
         cpu_power = float(df['Processor Power_0(Watt)'].iloc[i])
@@ -95,6 +106,9 @@ def estimate_cpu_power_consumption(df):
     return [average_cpu_wattage, df1]
 
 def estimate_gpu_power_consumption(nvidia_smi_filename):
+    """Estimates the average gpu total power consumption. This function uses the 
+    file created by nvidia-smi to have the best accuracy."""
+
     gpu_df = read_nvidia_smi_file(nvidia_smi_filename)
 
     gpu_wattage_sum = 0
@@ -114,6 +128,11 @@ def estimate_gpu_power_consumption(nvidia_smi_filename):
     return average_gpu_wattage
 
 def estimate_dram_power_consumption(df):
+    """Estimates the average gpu total power consumption. This function uses the 
+    file created by nvidia-smi to have the best accuracy. It returns the average
+    dram power consumption and the sum of the energy consumed during the executi
+    on time"""
+
     dram_wattage_sum = 0
     i = 0
     dram_process_power = []
@@ -131,6 +150,7 @@ def estimate_dram_power_consumption(df):
     return [average_dram_wattage,cumulative_dram_energy]
 
 def main():
+    
     with open("./process-energy-estimation/configuration.json") as json_file:
         configuration = json.load(json_file)
     
