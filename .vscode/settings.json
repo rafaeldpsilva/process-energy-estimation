@@ -1,7 +1,0 @@
-{
-    "python.testing.pytestArgs": [
-        "process-energy-estimation"
-    ],
-    "python.testing.unittestEnabled": false,
-    "python.testing.pytestEnabled": true
-}

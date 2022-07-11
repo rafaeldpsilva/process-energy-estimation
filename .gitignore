@@ -4,6 +4,11 @@
 #     https://www.atlassian.com/git/tutorials/saving-changes/gitignore
 #
 
+# VS code
+.vscode/
+
+# Tests
+test/
 
 # Node artifact files
 node_modules/
