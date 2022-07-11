@@ -5,10 +5,6 @@ Estimate and track the energy consumption of your software, quantify and analyze
 
 <br/>
 
-[![](https://anaconda.org/conda-forge/codecarbon/badges/version.svg)](https://anaconda.org/conda-forge/codecarbon)
-[![](https://img.shields.io/pypi/v/codecarbon?color=024758)](https://pypi.org/project/codecarbon/)
-
-
 - [About Process Energy Estimation 💡](#about-process-energy-estimation-)
 - [Installation :battery:](#installation-battery)
       - [Using git](#using-git)
