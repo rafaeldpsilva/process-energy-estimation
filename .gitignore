@@ -8,7 +8,7 @@
 .vscode/
 
 # Tests
-test/
+tests/
 
 # Node artifact files
 node_modules/
