@@ -10,10 +10,10 @@ Estimate and track the energy consumption of your software, quantify and analyze
 
 
 - [About Process Energy Estimation 💡](#about-process-energy-estimation-)
-- [Installation](#installation)
-      - [Using git](#install-using-git)
-      - [Intel Power Gadget](#install-intel-power-gadget)
-      - [Nvidia System Management Interface](#install-nvidia-system-management-interface)
+- [Installation :battery:](#installation-battery)
+      - [Using git](#using-git)
+      - [Intel Power Gadget](#intel-power-gadget)
+      - [Nvidia System Management Interface](#nvidia-system-management-interface)
       - [Install dependencies](#install-dependencies)
 - [Quickstart 🚀](#quickstart-)
     - [Configuration](#configuration)
@@ -21,9 +21,7 @@ Estimate and track the energy consumption of your software, quantify and analyze
 - [Infrastructure Support 🖥️](#infrastructure-support-️)
     - [GPU](#gpu)
     - [CPU](#cpu)
-      - [On Windows and Mac](#on-windows-and-mac)
-      - [On Linux](#on-linux)
-      - [On all platforms](#on-all-platforms)
+      - [Windows](#windows)
 - [Contact 📝](#contact-)
 
 # About Process Energy Estimation 💡
@@ -38,7 +36,7 @@ By taking into account your computing hardware, usage and running time, Process 
 
 Follow the steps below to set up the package and don't hesitate to open an issue if you need help!
 
-# Installation
+# Installation :battery:
 In the root of your project, clone or download the repository present in [this github page](https://github.com/rafaeldpsilva/process-energy-monitor)
 
 ### Using git
@@ -67,7 +65,7 @@ You can check if it is installed correctly by running the following command in y
 ```
 nvidia-smi -h
 ````
-## Dependencies
+## Install Dependencies
 
 In order to run the code successfully you also need to install some dependencies. Run this three commands to do so:
 
