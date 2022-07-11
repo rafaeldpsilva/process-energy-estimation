@@ -52,7 +52,7 @@ def read_powerlog_file(powerlog_filename):
     df1 = df[:-14]
     return df1
 
-def read_csv_file(filename):
+def read_csv_file(powerlog_filename):
     """Reads a specified csv file and transforms it in a pandas dataframe."""
     
     data = pd.read_csv(powerlog_filename)  
