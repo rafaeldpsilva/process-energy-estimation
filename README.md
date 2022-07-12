@@ -33,13 +33,15 @@ By taking into account your computing hardware, usage and running time, Process 
 Follow the steps below to set up the package and don't hesitate to open an issue if you need help!
 
 # Installation :battery:
-In the root of your project, clone or download the repository present in [this github page](https://github.com/rafaeldpsilva/process-energy-monitor)
+Clone or download the repository present in [this github page](https://github.com/rafaeldpsilva/process-energy-monitor)
 
 ### Using git
 
 ```
 git clone https://github.com/rafaeldpsilva/process-energy-monitor.git
 ````
+Then extract the folder [`process-energy-estimation/`](/process-energy-estimation/)  to the root of your project
+
 ## Intel Power Gadget
 
 To install Intel Power Gadget, follow the instructions given on [this website](https://www.intel.com/content/www/us/en/developer/articles/tool/power-gadget.html)
