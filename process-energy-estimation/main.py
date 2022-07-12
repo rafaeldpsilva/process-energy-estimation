@@ -40,10 +40,10 @@ def process_cpu_usage(process_filename, pid):
         except:
             return 0
 
-def join_process_data(powerlog_filename, process_filename, nvidia_smi_filename):
+def join_process_data(powerlog_filename, process_filename, nvidia_smi_filename, cpu_sockets):
     """Merges the three csv files on a pandas dataframe."""
 
-    powerlog_data = read_powerlog_file(powerlog_filename)
+    powerlog_data = read_powerlog_file(powerlog_filename, cpu_sockets)
     process_data = read_csv_file(process_filename)
     gpu_data = read_csv_file(nvidia_smi_filename)
     gpu_data.columns = ['index','timestamp','power.draw [W]']
@@ -160,6 +160,7 @@ def main():
     nvidia_smi_filename = configuration['NVIDIA_SMI_FILENAME']
     total_process_data = configuration['TOTAL_PROCESS_DATA']
     interval = configuration['INTERVAL']
+    cpu_sockets = configuration['PHYSICAL_CPU_SOCKETS']
 
     initialize_files(powerlog_filename, process_filename, nvidia_smi_filename)
 
@@ -174,7 +175,7 @@ def main():
 
     cmd.kill_process(pid)
     
-    process_df = join_process_data(powerlog_filename, process_filename, nvidia_smi_filename)
+    process_df = join_process_data(powerlog_filename, process_filename, nvidia_smi_filename, cpu_sockets)
 
     cpu_on = configuration['CPU']
     if(cpu_on):

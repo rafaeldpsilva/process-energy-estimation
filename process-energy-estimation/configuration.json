@@ -7,5 +7,6 @@
     "INTERVAL" : 100,
     "CPU": 1,
     "GPU": 0,
-    "DRAM": 1
+    "DRAM": 1,
+    "PHYSICAL_CPU_SOCKETS": 1
 }

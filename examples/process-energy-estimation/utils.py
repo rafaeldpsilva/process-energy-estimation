@@ -43,13 +43,14 @@ def read_nvidia_smi_file(nvidia_smi_filename):
     index_df = pd.DataFrame(index, columns =['index'])
     return pd.concat([index_df, power_draw_df], axis = 1)
     
-def read_powerlog_file(powerlog_filename):
+def read_powerlog_file(powerlog_filename, cpu_sockets):
     """Transforms the file outputed by the powerlog3.0 tool in a pandas dataframe. 
     Also deletes the last 14 rows present in the first column of the file"""
 
     data = pd.read_csv(powerlog_filename)  
     df = pd.DataFrame(data)
-    df1 = df[:-14]
+    n_tail = 5 + (cpu_sockets * 9)
+    df1 = df[:-n_tail]
     return df1
 
 def read_csv_file(powerlog_filename):
