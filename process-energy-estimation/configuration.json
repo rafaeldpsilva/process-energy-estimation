@@ -6,7 +6,7 @@
     "TOTAL_PROCESS_DATA" : "./process-energy-estimation/reports/total_process_data.csv",
     "INTERVAL" : 100,
     "CPU": 1,
-    "GPU": 0,
+    "GPU": 1,
     "DRAM": 1,
-    "PHYSICAL_CPU_SOCKETS": 1
+    "PHYSICAL_CPU_SOCKETS": 2
 }
