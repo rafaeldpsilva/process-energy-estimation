@@ -31,11 +31,11 @@ def process_cpu_usage(process_filename, pid):
     f.close()
     while True:
         try:
-            total_cpu_usage = psutil.cpu_percent(interval=None)
+            total_cpu_usage = psutil.cpu_percent(interval=0.1)
             process_cpu_usage = process.cpu_percent(interval=None)/cpu_count
-            if(usage != 0.0):
+            if(process_cpu_usage != 0.0):
                 f = open(process_filename, "a")
-                f.write(datetime.datetime.now().strftime("%H:%M:%S:%f")+ "," + str(process_cpu_usage) +"," + str(total_cpu_usage) +"\n")
+                f.write(datetime.datetime.now().strftime("%H:%M:%S:%f") + "," + str(process_cpu_usage) + "," + str(total_cpu_usage) + "\n")
                 f.close()
         except:
             return 0
@@ -49,7 +49,7 @@ def join_process_data(powerlog_filename, process_filename, nvidia_smi_filename, 
     gpu_data.columns = ['index','timestamp','power.draw [W]']
     cpu_time_in_microseconds = array_to_microseconds(process_data['Time'],time_to_microsecs)
     gpu_time_in_microseconds = array_to_microseconds(gpu_data['timestamp'],datatime_to_microsecs)
-    cpu_df = pd.DataFrame([], columns =['Time', 'Process CPU Usage(%)'])
+    cpu_df = pd.DataFrame([], columns =['Time', 'Process CPU Usage(%)', 'Total CPU Usage(%)'])
     gpu_df = pd.DataFrame([], columns =['timestamp'])
 
     power_draw = []
@@ -68,7 +68,7 @@ def join_process_data(powerlog_filename, process_filename, nvidia_smi_filename, 
         
         i += 1
     
-    df = pd.DataFrame(powerlog_data, columns=['System Time','Elapsed Time (sec)','CPU Utilization(%)','Processor Power_0(Watt)','Processor Power_1(Watt)','DRAM Power_0(Watt)','Cumulative DRAM Energy_0(Joules)'])
+    df = pd.DataFrame(powerlog_data, columns=['System Time','Elapsed Time (sec)',' CPU Utilization(%)','Processor Power_0(Watt)','Processor Power_1(Watt)','DRAM Power_0(Watt)','Cumulative DRAM Energy_0(Joules)'])
     df = pd.concat([df, cpu_df], axis = 1)
     power_draw_df = pd.DataFrame(power_draw, columns =['power.draw [W]'])
     gpu_df = pd.concat([gpu_df, power_draw_df], axis = 1)
@@ -92,10 +92,11 @@ def estimate_cpu_power_consumption(df):
     while i < length:
         cpu_power_0 = float(df['Processor Power_0(Watt)'].iloc[i])
         cpu_power_1 = float(df['Processor Power_1(Watt)'].iloc[i])
-        cpu_utilization = float(df['CPU Utilization(%)'].iloc[i])
+        cpu_utilization = float(df[' CPU Utilization(%)'].iloc[i])
         process_utilization = float(df['Process CPU Usage(%)'].iloc[i])
+
+        print("cpu_power_0: "+str(cpu_power_0)+" | cpu_utilization: "+str(cpu_utilization)+" | process_utilization: "+str(process_utilization))
         power = round(process_utilization/cpu_utilization * (cpu_power_0 + cpu_power_1), 4)
-        print(power)
         process_power.append(power)
         cpu_wattage_sum += power
         i += 1
@@ -154,7 +155,7 @@ def estimate_dram_power_consumption(df):
 def main():
     [command,powerlog_filename,process_filename,nvidia_smi_filename,total_process_data,interval,cpu_sockets] = get_configuration()
 
-    """ initialize_files(powerlog_filename, process_filename, nvidia_smi_filename)
+    initialize_files(powerlog_filename, process_filename, nvidia_smi_filename)
 
     thread_cpu = Process(target = process_cpu_usage, args = (process_filename, 0, ))
     thread_cpu.start()
@@ -165,10 +166,9 @@ def main():
     
     thread_cpu.join()
 
-    cmd.kill_process(pid) """
+    cmd.kill_process(pid)
     
     process_df = join_process_data(powerlog_filename, process_filename, nvidia_smi_filename, cpu_sockets)
-    print(process_df)
     
     mean_cpu_consumption = 0
     if(get_cpu_on()):

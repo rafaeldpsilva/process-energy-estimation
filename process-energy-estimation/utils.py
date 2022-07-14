@@ -66,11 +66,11 @@ def read_txt(name):
     with open(name) as f:
         lines = f.readlines()
     
-    df = pd.DataFrame([], columns =['Time', 'Process CPU Usage(%)'])
+    df = pd.DataFrame([], columns =['Time', 'Process CPU Usage(%)', 'Total CPU Usage(%)'])
     
     for line in lines:
         split = line.split()
-        data = pd.DataFrame([[split[0], split[1]]], columns=['Time','Process CPU Usage(%)'])
+        data = pd.DataFrame([[split[0], split[1]]], columns=['Time','Process CPU Usage(%)', 'Total CPU Usage(%)'])
         df = pd.concat([df,data], ignore_index = True, axis = 0)
 
     return df
