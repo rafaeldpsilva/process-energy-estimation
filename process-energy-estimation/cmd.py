@@ -11,7 +11,7 @@ def get_powerlog_report(filename,command):
     """Executes the PowerLog3.0 tool for the time that the command specified is runni
     ng and creates a csv file with the data generated during that time."""
 
-    subprocess.run('echo ProcessReport & PowerLog3.0.exe -file ' + filename + ' -cmd ' + command, shell=True)
+    subprocess.run('echo ProcessReport & "C:/Program Files/Intel/Power Gadget 3.6/PowerLog3.0.exe" -file ' + filename + ' -cmd ' + command, shell=True)
 
 def get_gpu_report(filename,interval):
     """Executes the nvidia-smi command that registers the index, timestamp and power.
