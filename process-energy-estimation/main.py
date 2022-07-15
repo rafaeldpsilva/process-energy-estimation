@@ -55,7 +55,7 @@ def join_process_data(powerlog_filename, process_filename, nvidia_smi_filename, 
     while i < length:
         time = utils.time_to_microsecs(powerlog_data['System Time'].iloc[i])
         [cpu_idx,value] = utils.find_nearest(cpu_time_in_microseconds,time)
-        cpu_df = pd.concat([cpu_df,process_data.iloc[[cpu_idx],[0,1]]], ignore_index = True, axis = 0)
+        cpu_df = pd.concat([cpu_df,process_data.iloc[[cpu_idx],[0,1]]], ignore_index = True, axis = 0)      
         i += 1
     
     df = pd.DataFrame(powerlog_data, columns=['System Time','Elapsed Time (sec)',' CPU Utilization(%)','Processor Power_0(Watt)','Processor Power_1(Watt)','DRAM Power_0(Watt)','Cumulative DRAM Energy_0(Joules)'])
@@ -76,13 +76,15 @@ def estimate_cpu_power_consumption(df):
 
     length = len(df['Time'])
     while i < length:
-        cpu_power_0 = float(df['Processor Power_0(Watt)'].iloc[i])
-        cpu_power_1 = float(df['Processor Power_1(Watt)'].iloc[i])
+        cpu_sockets = utils.get_physical_cpu_sockets()
+        cpu_power = 0
+        for x in range(cpu_sockets):
+            cpu_power += float(df['Processor Power_' + str(x) + '(Watt)'].iloc[i])
+
         cpu_utilization = float(df[' CPU Utilization(%)'].iloc[i])
         process_utilization = float(df['Process CPU Usage(%)'].iloc[i])
 
-        print("cpu_power_0: "+str(cpu_power_0)+" | cpu_utilization: "+str(cpu_utilization)+" | process_utilization: "+str(process_utilization))
-        power = round(process_utilization/cpu_utilization * (cpu_power_0 + cpu_power_1), 4)
+        power = round(process_utilization/cpu_utilization * cpu_power, 4)
         process_power.append(power)
         cpu_wattage_sum += power
         i += 1
@@ -107,11 +109,11 @@ def estimate_gpu_power_consumption(nvidia_smi_filename):
     for x in range(len(gpu_df.columns)):
         column = 'power.draw_' + str(x) + ' [W]'
         length = len(gpu_df[column])
-    while i < length:
+        while i < length:
             gpu_power = float(gpu_df[column].iloc[i])
-        gpu_process_power.append(gpu_power)
-        gpu_wattage_sum += gpu_power
-        i += 1
+            gpu_process_power.append(gpu_power)
+            gpu_wattage_sum += gpu_power
+            i += 1
     
     average_gpu_wattage = gpu_wattage_sum/i
     
