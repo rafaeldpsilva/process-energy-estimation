@@ -143,28 +143,6 @@ def plot_usage(df):
     plt.legend()
     plt.show()
 
-def print_results(elapsed_time,cpu_consumption,gpu_consumption,dram_consumption,dram_energy):
-    """Prints the results of the process energy and power consumption estimation."""
-    
-    total_consumption = cpu_consumption + gpu_consumption + dram_consumption
-
-    print("\nThe process lasted: {} Seconds".format(elapsed_time))
-    print("The process consumed: {} Watts".format(round(total_consumption,4)))
-    print("-------------------------CPU-------------------------")
-    print("Number of CPU Sockets: {}".format(get_physical_cpu_sockets()))
-    print("Average CPU Power: {} Watts".format(round(cpu_consumption,4)))
-    print("CPU Energy Consumption: {} Wh".format(round(cpu_consumption*elapsed_time/3600,4)))
-    print("-------------------------GPU-------------------------")
-    print("Number of GPU Units: ".format(2))
-    print("Average GPU Power: {} Watts".format(round(gpu_consumption,4)))
-    print("GPU Energy Consumption: {} Wh".format(round(gpu_consumption*elapsed_time/3600,4)))
-    print("-------------------------DRAM------------------------")
-    print("Average DRAM Power: {} Watts".format(round(dram_consumption,4)))
-    print("DRAM Energy Consumption: {} Wh".format(dram_energy/3600))
-    print("-------------------------TOTAL-----------------------")
-    total_consumption = (cpu_consumption + gpu_consumption) * elapsed_time + dram_energy
-    print("The process consumed: {} Wh".format(round(total_consumption/3600,4)))
-
 def time_to_microsecs(string):
     """Formats a string with this time format - 00:00:00:000 - in microseconds."""
 
