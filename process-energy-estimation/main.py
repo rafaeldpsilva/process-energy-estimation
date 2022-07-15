@@ -99,15 +99,16 @@ def estimate_gpu_power_consumption(nvidia_smi_filename):
     file created by nvidia-smi to have the best accuracy."""
 
     gpu_df = utils.read_nvidia_smi_file(nvidia_smi_filename)
-
+    print(gpu_df)
     gpu_wattage_sum = 0
     i = 0
     gpu_process_power = []
 
-    #Estimar energia da gpu
-    length = len(gpu_df['power.draw [W]'])
+    for x in range(len(gpu_df.columns)):
+        column = 'power.draw_' + str(x) + ' [W]'
+        length = len(gpu_df[column])
     while i < length:
-        gpu_power = float(gpu_df['power.draw [W]'].iloc[i])
+            gpu_power = float(gpu_df[column].iloc[i])
         gpu_process_power.append(gpu_power)
         gpu_wattage_sum += gpu_power
         i += 1

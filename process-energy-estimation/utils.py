@@ -35,14 +35,20 @@ def read_nvidia_smi_file(nvidia_smi_filename):
     length = len(df['timestamp'])
     i = 0
     while i < length:
-        p = df['power.draw [W]'].iloc[i][:-2]
-        power_draw.append(float(p.strip()))
+        gpu = df['index'].iloc[i]
+        if gpu + 1 > len(power_draw):
+            power_draw.append([])
+        power = df['power.draw [W]'].iloc[i][:-2]
+        power_draw[gpu].append(float(power.strip()))
         index.append(i)
         i += 1
     
-    power_draw_df = pd.DataFrame(power_draw, columns =['power.draw [W]'])
-    index_df = pd.DataFrame(index, columns =['index'])
-    return pd.concat([index_df, power_draw_df], axis = 1)
+    gpu_df = pd.DataFrame()
+    
+    for x in range(len(power_draw)):
+        power_draw_df = pd.DataFrame(power_draw[x], columns =['power.draw_' + str(x) + ' [W]'])
+        gpu_df = pd.concat([gpu_df, power_draw_df], axis = 1)
+    return gpu_df
     
 def read_powerlog_file(powerlog_filename, cpu_sockets):
     """Transforms the file outputed by the powerlog3.0 tool in a pandas dataframe. 
