@@ -71,31 +71,36 @@ def estimate_cpu_power_consumption(df):
     n dataframe and an added column with the cpu process power consumption at a 
     given moment."""
 
-    cpu_wattage_sum = 0
-    i = 0
+    cpu_power_sum = []
     process_power = []
 
+    i = 0
     length = len(df['Time'])
     while i < length:
-        cpu_sockets = utils.get_physical_cpu_sockets()
-        cpu_power = 0
-        for x in range(cpu_sockets):
-            cpu_power += float(df['Processor Power_' + str(x) + '(Watt)'].iloc[i])
-
         cpu_utilization = float(df[' CPU Utilization(%)'].iloc[i])
         process_utilization = float(df['Process CPU Usage(%)'].iloc[i])
+        
+        power1 = 0
+        cpu_sockets = utils.get_physical_cpu_sockets()
+        for x in range(cpu_sockets):
+            cpu_power = float(df['Processor Power_' + str(x) + '(Watt)'].iloc[i])
+            power = round(process_utilization/cpu_utilization * cpu_power, 4)
+            if x + 1 > len(cpu_power_sum):
+                cpu_power_sum.append(0)
+            cpu_power_sum[x] += power
+            power1 += power
 
-        power = round(process_utilization/cpu_utilization * cpu_power, 4)
-        process_power.append(power)
-        cpu_wattage_sum += power
+        process_power.append(power1)
         i += 1
     
-    average_cpu_wattage = cpu_wattage_sum/i
+    average_cpu_power = []
+    for x in range(cpu_sockets):
+        average_cpu_power.append(cpu_power_sum[x]/i)
 
     process_cpu_power_df = pd.DataFrame(process_power, columns=['Process CPU Power(Watt)'])
     df1 = pd.concat([df,process_cpu_power_df], axis = 1)
     
-    return [average_cpu_wattage, df1]
+    return [average_cpu_power, df1]
 
 def estimate_gpu_power_consumption(nvidia_smi_filename):
     """Estimates the average gpu total power consumption. This function uses the 
@@ -146,7 +151,7 @@ def estimate_dram_power_consumption(df):
 def main():
     [command,powerlog_filename,process_filename,nvidia_smi_filename,total_process_data,interval,cpu_sockets] = utils.get_configuration()
 
-    utils.initialize_files(powerlog_filename, process_filename, nvidia_smi_filename)
+    """ utils.initialize_files(powerlog_filename, process_filename, nvidia_smi_filename)
 
     thread_cpu = Process(target = process_cpu_usage, args = (process_filename, 0, ))
     thread_cpu.start()
@@ -157,7 +162,7 @@ def main():
     
     thread_cpu.join()
 
-    cmd.kill_process(pid)
+    cmd.kill_process(pid) """
     
     process_df = join_process_data(powerlog_filename, process_filename, nvidia_smi_filename, cpu_sockets)
     
@@ -165,10 +170,17 @@ def main():
     average_cpu_power = 0
     if(utils.get_cpu_on()):
         [average_cpu_power,process_df] = estimate_cpu_power_consumption(process_df)
+        cpu_sockets = utils.get_physical_cpu_sockets()  
         print("\n-------------------------CPU-------------------------")
-        print("Number of CPU Sockets: {}".format(utils.get_physical_cpu_sockets()))
-        print("Average CPU Power: {} Watts".format(round(average_cpu_power,4)))
-        print("CPU Energy Consumption: {} Wh".format(round(average_cpu_power*elapsed_time/3600,4)))
+        print("Number of CPU Sockets: {}".format(cpu_sockets))
+        total_average_cpu_power = 0
+        for x in range(cpu_sockets):
+            print("\nAverage CPU {} Power: {} Watts".format(x,round(average_cpu_power[x],4)))
+            print("CPU {} Energy Consumption: {} Wh".format(x,round(average_cpu_power[x]*elapsed_time/3600,4)))
+            total_average_cpu_power += average_cpu_power[x]
+        if(cpu_sockets > 1):
+            print("\nTotal Average CPU {} Power: {} Watts".format(x,round(total_average_cpu_power,4)))
+            print("Total CPU {} Energy Consumption: {} Wh".format(x,round(total_average_cpu_power*elapsed_time/3600,4)))
     
     if(utils.get_gpu_on()):
         [gpu_units,average_gpu_power] = estimate_gpu_power_consumption(nvidia_smi_filename)
@@ -193,9 +205,9 @@ def main():
         
     print("\n-------------------------TOTAL-----------------------")
     print("The process lasted: {} Seconds".format(elapsed_time))
-    total_consumption = average_cpu_power + total_average_gpu_power + average_dram_power
+    total_consumption = total_average_cpu_power + total_average_gpu_power + average_dram_power
     print("The process consumed: {} Watts".format(round(total_consumption,4)))
-    total_consumption = (average_cpu_power + total_average_gpu_power) * elapsed_time + dram_energy
+    total_consumption = (total_average_cpu_power + total_average_gpu_power) * elapsed_time + dram_energy
     print("The process consumed: {} Wh\n\n".format(round(total_consumption/3600,4)))
     
     process_df.to_csv(total_process_data)
