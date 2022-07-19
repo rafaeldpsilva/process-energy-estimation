@@ -148,26 +148,8 @@ def estimate_dram_power_consumption(df):
     cumulative_dram_energy = df['Cumulative DRAM Energy_0(Joules)'].iloc[-1]
     return [average_dram_wattage,cumulative_dram_energy]
 
-def main():
-    [command,powerlog_filename,process_filename,nvidia_smi_filename,total_process_data,interval,cpu_sockets] = utils.get_configuration()
-
-    """ utils.initialize_files(powerlog_filename, process_filename, nvidia_smi_filename)
-
-    thread_cpu = Process(target = process_cpu_usage, args = (process_filename, 0, ))
-    thread_cpu.start()
-
-    pid = cmd.get_gpu_report(nvidia_smi_filename, interval)
-
-    cmd.get_powerlog_report(powerlog_filename, command)
-    
-    thread_cpu.join()
-
-    cmd.kill_process(pid) """
-    
-    process_df = join_process_data(powerlog_filename, process_filename, nvidia_smi_filename, cpu_sockets)
-    
+def print_results(process_df,nvidia_smi_filename,cpu_sockets):
     elapsed_time = process_df['Elapsed Time (sec)'].iloc[-1]
-    average_cpu_power = 0
     if(utils.get_cpu_on()):
         [average_cpu_power,process_df] = estimate_cpu_power_consumption(process_df)
         cpu_sockets = utils.get_physical_cpu_sockets()  
@@ -209,6 +191,26 @@ def main():
     print("The process consumed: {} Watts".format(round(total_consumption,4)))
     total_consumption = (total_average_cpu_power + total_average_gpu_power) * elapsed_time + dram_energy
     print("The process consumed: {} Wh\n\n".format(round(total_consumption/3600,4)))
+
+def main():
+    [command,powerlog_filename,process_filename,nvidia_smi_filename,total_process_data,interval,cpu_sockets] = utils.get_configuration()
+
+    """ utils.initialize_files(powerlog_filename, process_filename, nvidia_smi_filename)
+
+    thread_cpu = Process(target = process_cpu_usage, args = (process_filename, 0, ))
+    thread_cpu.start()
+
+    pid = cmd.get_gpu_report(nvidia_smi_filename, interval)
+
+    cmd.get_powerlog_report(powerlog_filename, command)
+    
+    thread_cpu.join()
+
+    cmd.kill_process(pid) """
+    
+    process_df = join_process_data(powerlog_filename, process_filename, nvidia_smi_filename, cpu_sockets)
+    
+    print_results(process_df,nvidia_smi_filename,cpu_sockets)
     
     process_df.to_csv(total_process_data)
 
