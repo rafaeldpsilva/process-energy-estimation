@@ -40,12 +40,11 @@ def process_cpu_usage(process_filename, pid):
         except:
             return 0
 
-def join_process_data(powerlog_filename, process_filename, nvidia_smi_filename, cpu_sockets):
+def join_process_cpu_usage(powerlog_filename, process_filename, cpu_sockets):
     """Merges the three csv files on a pandas dataframe."""
 
     powerlog_data = utils.read_powerlog_file(powerlog_filename, cpu_sockets)
     process_data = utils.read_csv_file(process_filename)
-    gpu_df = utils.read_nvidia_smi_file(nvidia_smi_filename)
     cpu_time_in_microseconds = utils.array_to_microseconds(process_data['Time'],utils.time_to_microsecs)
     cpu_df = pd.DataFrame([], columns =['Time', 'Process CPU Usage(%)', 'Total CPU Usage(%)'])
 
@@ -65,7 +64,7 @@ def join_process_data(powerlog_filename, process_filename, nvidia_smi_filename, 
 def estimate_cpu_power_consumption(df):
     """Estimates the average cpu power consumption of the process by multiplying 
     the cpu usage of the process by the total cpu power consumption. It uses the 
-    dataframe returned by join_process_data function so the rows from the cpu pr
+    dataframe returned by join_process_cpu_usage function so the rows from the cpu pr
     ocess usage matches the right cpu total power consumption rows. This functio
     n also returns a new dataframe with the same information present in the give
     n dataframe and an added column with the cpu process power consumption at a 
@@ -195,20 +194,21 @@ def print_results(process_df,nvidia_smi_filename,cpu_sockets):
 def main():
     [command,powerlog_filename,process_filename,nvidia_smi_filename,total_process_data,interval,cpu_sockets] = utils.get_configuration()
 
-    """ utils.initialize_files(powerlog_filename, process_filename, nvidia_smi_filename)
+    if(True):
+        utils.initialize_files(powerlog_filename, process_filename, nvidia_smi_filename)
 
-    thread_cpu = Process(target = process_cpu_usage, args = (process_filename, 0, ))
-    thread_cpu.start()
+        thread_cpu = Process(target = process_cpu_usage, args = (process_filename, 0, ))
+        thread_cpu.start()
 
-    pid = cmd.get_gpu_report(nvidia_smi_filename, interval)
+        pid = cmd.get_gpu_report(nvidia_smi_filename, interval)
 
-    cmd.get_powerlog_report(powerlog_filename, command)
+        cmd.get_powerlog_report(powerlog_filename, command)
+        
+        thread_cpu.join()
+
+        cmd.kill_process(pid)
     
-    thread_cpu.join()
-
-    cmd.kill_process(pid) """
-    
-    process_df = join_process_data(powerlog_filename, process_filename, nvidia_smi_filename, cpu_sockets)
+    process_df = join_process_cpu_usage(powerlog_filename, process_filename, cpu_sockets)
     
     print_results(process_df,nvidia_smi_filename,cpu_sockets)
     
