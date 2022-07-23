@@ -115,6 +115,11 @@ def get_dram_on():
             configuration = json.load(json_file)
     return configuration['DRAM']
 
+def get_cpu_usage_collector():
+    with open("./process-energy-estimation/configuration.json") as json_file:
+            configuration = json.load(json_file)
+    return configuration['CPU_USAGE_COLLECTOR']
+    
 def plot_power(df):
     """Plots the cpu total power consumption and the cpu process power consumption, t
     hrought time."""

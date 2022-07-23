@@ -54,7 +54,7 @@ def join_process_cpu_usage(powerlog_filename, process_filename, cpu_sockets):
     while i < length:
         time = utils.time_to_microsecs(powerlog_data['System Time'].iloc[i])
         [cpu_idx,value] = utils.find_nearest(cpu_time_in_microseconds,time)
-        cpu_df = pd.concat([cpu_df,process_data.iloc[[cpu_idx],[0,1]]], ignore_index = True, axis = 0)      
+        cpu_df = pd.concat([cpu_df,process_data.iloc[[cpu_idx],[0,1,2]]], ignore_index = True, axis = 0)      
         i += 1
     
     df = pd.DataFrame(powerlog_data, columns=['System Time','Elapsed Time (sec)',' CPU Utilization(%)','Processor Power_0(Watt)','Processor Power_1(Watt)','DRAM Power_0(Watt)','Cumulative DRAM Energy_0(Joules)'])
@@ -69,14 +69,17 @@ def estimate_cpu_power_consumption(df):
     n also returns a new dataframe with the same information present in the give
     n dataframe and an added column with the cpu process power consumption at a 
     given moment."""
-
     cpu_power_sum = []
     process_power = []
 
     i = 0
     length = len(df['Time'])
     while i < length:
-        cpu_utilization = float(df[' CPU Utilization(%)'].iloc[i])
+        if(utils.get_cpu_usage_collector()):
+            cpu_utilization = float(df['Total CPU Usage(%)'].iloc[i])
+        else:
+            cpu_utilization = float(df[' CPU Utilization(%)'].iloc[i])
+        
         process_utilization = float(df['Process CPU Usage(%)'].iloc[i])
         
         power1 = 0

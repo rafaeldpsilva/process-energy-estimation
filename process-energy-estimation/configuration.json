@@ -8,5 +8,6 @@
     "CPU": 1,
     "GPU": 1,
     "DRAM": 1,
-    "PHYSICAL_CPU_SOCKETS": 1
+    "PHYSICAL_CPU_SOCKETS": 2,
+    "CPU_USAGE_COLLECTOR": 1
 }
