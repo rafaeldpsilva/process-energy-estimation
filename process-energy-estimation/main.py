@@ -152,12 +152,12 @@ def estimate_dram_power_consumption(df):
 
 def print_results(process_df,nvidia_smi_filename,cpu_sockets):
     elapsed_time = process_df['Elapsed Time (sec)'].iloc[-1]
+    total_average_cpu_power = 0
     if(utils.get_cpu_on()):
         [average_cpu_power,process_df] = estimate_cpu_power_consumption(process_df)
         cpu_sockets = utils.get_physical_cpu_sockets()  
         print("\n-------------------------CPU-------------------------")
         print("Number of CPU Sockets: {}".format(cpu_sockets))
-        total_average_cpu_power = 0
         for x in range(cpu_sockets):
             print("\nAverage CPU {} Power: {} Watts".format(x,round(average_cpu_power[x],4)))
             print("CPU {} Energy Consumption: {} Wh".format(x,round(average_cpu_power[x]*elapsed_time/3600,4)))
@@ -166,11 +166,11 @@ def print_results(process_df,nvidia_smi_filename,cpu_sockets):
             print("\nTotal Average CPU {} Power: {} Watts".format(x,round(total_average_cpu_power,4)))
             print("Total CPU {} Energy Consumption: {} Wh".format(x,round(total_average_cpu_power*elapsed_time/3600,4)))
     
+    total_average_gpu_power = 0    
     if(utils.get_gpu_on()):
         [gpu_units,average_gpu_power] = estimate_gpu_power_consumption(nvidia_smi_filename)
         print("\n-------------------------GPU-------------------------")
         print("Number of GPU Units: {}".format(gpu_units))
-        total_average_gpu_power = 0    
         for x in range(gpu_units):
             print("\nAverage GPU {} Power: {} Watts".format(x,round(average_gpu_power[x],4)))
             print("GPU {} Energy Consumption: {} Wh".format(x,round(average_gpu_power[x]*elapsed_time/3600,4)))
