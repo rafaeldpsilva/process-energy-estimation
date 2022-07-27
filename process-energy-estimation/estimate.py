@@ -1,3 +1,7 @@
+import configuration
+import pandas as pd
+import utils
+
 def estimate_cpu_power_consumption(df):
     """Estimates the average cpu power consumption of the process by multiplying 
     the cpu usage of the process by the total cpu power consumption. It uses the 

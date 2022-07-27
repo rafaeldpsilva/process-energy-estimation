@@ -1,4 +1,5 @@
 import estimate
+import configuration
 
 def plot_power(df):
     """Plots the cpu total power consumption and the cpu process power consumption, t

@@ -4,6 +4,7 @@ import utils
 import configuration
 import cmd
 import convert
+import report
 import psutil
 import pandas as pd
 
@@ -195,7 +196,7 @@ def join_process_cpu_usage(powerlog_filename, process_filename, cpu_sockets):
 def main():
     [command,powerlog_filename,process_filename,nvidia_smi_filename,total_process_data,interval,cpu_sockets] = configuration.get_configuration()
 
-    if(True):
+    if(False):
         configuration.initialize_files(powerlog_filename, process_filename, nvidia_smi_filename)
 
         thread_cpu = Process(target = measure_process_cpu_usage, args = (process_filename, 0, ))
@@ -211,7 +212,7 @@ def main():
     
     process_df = join_process_cpu_usage(powerlog_filename, process_filename, cpu_sockets)
     
-    print_results(process_df,nvidia_smi_filename,cpu_sockets)
+    report.print_results(process_df,nvidia_smi_filename,cpu_sockets)
     
     process_df.to_csv(total_process_data)
 
