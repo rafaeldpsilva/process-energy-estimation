@@ -3,6 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import os
 import json
+import configuration
   
 def find_nearest(array, value):
     """Finds the nearest number specified value in the given array. Returns the index
@@ -26,7 +27,7 @@ def read_nvidia_smi_file(nvidia_smi_filename):
     i = 0
     while i < length:
         gpu = df['index'].iloc[i]
-        if gpu + 1 > len(power_draw):
+        if int(gpu) + 1 > len(power_draw):
             power_draw.append([])
         power = df['power.draw [W]'].iloc[i][:-2]
         power_draw[gpu].append(float(power.strip()))
@@ -46,10 +47,13 @@ def read_powerlog_file(powerlog_filename, cpu_sockets):
 
     data = pd.read_csv(powerlog_filename)  
     df = pd.DataFrame(data)
-    n_tail = 5 + (cpu_sockets * 9)
+    n_tail = 2 + (cpu_sockets * 9)
+    if(configuration.has_soc_gpu()):
+        n_tail += 3
     powerlog_data = df[:-n_tail]
     n_head = len(df) - n_tail
     general_data = df[n_head:]['System Time']
+    print(general_data)
     return [powerlog_data,general_data]
 
 def read_csv_file(csv_filename):

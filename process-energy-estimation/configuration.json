@@ -2,15 +2,16 @@
     "BASE_CHECK_SECONDS":5,
     "REPORTS_PATH": "./process-energy-estimation/reports/",
     "BASE_FILENAME": "base.csv",
-    "COMMAND" : "python sorting_algorithms.py", 
     "POWERLOG_FILENAME" : "powerlog.csv",
     "PROCESS_FILENAME" : "process.csv",
     "NVIDIA_SMI_FILENAME" : "nvidia.csv",
     "TOTAL_PROCESS_DATA" : "total_process_data.csv",
+    "COMMAND" : "python sorting_algorithms.py", 
     "INTERVAL" : 100,
     "CPU": 1,
     "GPU": 1,
     "DRAM": 1,
     "PHYSICAL_CPU_SOCKETS": 1,
-    "CPU_USAGE_COLLECTOR": 1
+    "CPU_USAGE_COLLECTOR": 1,
+    "SOC_GPU": 1
 }
