@@ -47,16 +47,17 @@ def print_results(process_df,nvidia_smi_filename,cpu_sockets):
     
     total_average_gpu_power = 0    
     if(configuration.get_gpu_on()):
-        [gpu_units,average_gpu_power] = estimate.estimate_gpu_power_consumption(nvidia_smi_filename)
+        [gpu_units,gpu_energy,average_gpu_power] = estimate.estimate_gpu_power_consumption(elapsed_time,nvidia_smi_filename)
         print("\n-------------------------GPU-------------------------")
         print("Number of GPU Units: {}".format(gpu_units))
         for x in range(gpu_units):
             print("\nAverage GPU {} Power: {} Watts".format(x,round(average_gpu_power[x],4)))
-            print("GPU {} Energy Consumption: {} Wh".format(x,round(average_gpu_power[x]*elapsed_time/3600,4)))
+            print("GPU {} Energy Consumption: {} Wh".format(x,round(gpu_energy[x],4)))
             total_average_gpu_power += average_gpu_power[x]
+            total_gpu_energy += gpu_energy[x]
         if(gpu_units > 1):
             print("\nTotal Average GPU {} Power: {} Watts".format(x,round(total_average_gpu_power,4)))
-            print("Total GPU {} Energy Consumption: {} Wh".format(x,round(total_average_gpu_power*elapsed_time/3600,4)))
+            print("Total GPU {} Energy Consumption: {} Wh".format(x,round(total_gpu_energy,4)))
     
     average_dram_power = 0
     dram_energy = 0

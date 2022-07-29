@@ -45,7 +45,7 @@ def estimate_cpu_power_consumption(df):
     
     return [average_cpu_power, df1]
 
-def estimate_gpu_power_consumption(nvidia_smi_filename):
+def estimate_gpu_power_consumption(elapsed_time,nvidia_smi_filename):
     """Estimates the average gpu total power consumption. This function uses the 
     file created by nvidia-smi to have the best accuracy."""
 
@@ -64,10 +64,13 @@ def estimate_gpu_power_consumption(nvidia_smi_filename):
             i += 1
     
     average_gpu_power = []
+    gpu_energy = []
     for x in range(gpu_units):
-        average_gpu_power.append(gpu_power_sum[x]/i)
+        power = gpu_power_sum[x]/i
+        average_gpu_power.append(power)
+        gpu_energy.append(power*elapsed_time/3600)
     
-    return [gpu_units,average_gpu_power]
+    return [gpu_units,gpu_energy,average_gpu_power]
 
 def estimate_dram_power_consumption(df):
     """Estimates the average gpu total power consumption. This function uses the 
