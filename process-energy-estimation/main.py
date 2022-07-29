@@ -9,20 +9,151 @@ import estimate
 import psutil
 import pandas as pd
 
+def energy(user_func, *args, powerLoss = 0.8, year, printToScreen, timeseries):
+    """ Evaluates the kwh needed for your code to run
+    Parameters:
+       user_func (function): user's function
+    Returns:
+        (process_kwh, return_value, watt_averages)
+    """
+
+    baseline_check_seconds = 5
+    files, multiple_cpus = utils.get_files()
+    is_nvidia_gpu = utils.valid_gpu()
+    is_valid_cpu = utils.valid_cpu()
+
+    # GPU handling if Nvidia
+    gpu_baseline =[0]
+    gpu_process = [0]
+    bash_command = "nvidia-smi -i 0 --format=csv,noheader --query-gpu=power.draw"
+
+    time_baseline = []
+    reading_baseline_wattage = []
+
+    time_process = []
+    reading_process_wattage = []
+
+    for i in range(int(baseline_check_seconds / DELAY)):
+        if is_nvidia_gpu:
+            output = subprocess.check_output(['bash','-c', bash_command])
+            output = float(output.decode("utf-8")[:-2])
+            gpu_baseline.append(output)
+        if is_valid_cpu:
+            files = utils.measure_files(files, DELAY)
+            files = utils.update_files(files)
+        else:
+            time.sleep(DELAY)
+        # Adds the most recent value of GPU; 0 if not Nvidia
+        last_reading = utils.get_total(files, multiple_cpus) + gpu_baseline[-1]
+        if last_reading >=0 and printToScreen:
+            utils.log("Baseline wattage", last_reading)
+            time = round(i* DELAY, 1)
+            time_baseline.append(time)
+            reading_baseline_wattage.append(last_reading)
+    if timeseries:
+        with open('baseline_wattage.csv', 'w') as baseline_wattage_file:
+            baseline_wattage_writer = csv.writer(baseline_wattage_file)
+            baseline_wattage_writer.writerow(["time", "baseline wattage reading"])
+            for i in range(len(time_baseline)):
+                baseline_wattage_writer.writerow([time_baseline[i], reading_baseline_wattage[i]])
+    if printToScreen:
+        utils.newline()
+
+    # Running the process and measuring wattage
+    q = Queue()
+    p = Process(target = func, args = (user_func, q, *args,))
+
+    start = timer()
+    small_delay_counter = 0
+    return_value = None
+    p.start()
+
+    while(p.is_alive()):
+        # Checking at a faster rate for quick processes
+        if (small_delay_counter > DELAY):
+            delay = DELAY / 10
+            small_delay_counter+=1
+        else:
+            delay = DELAY
+
+        if is_nvidia_gpu:
+            output = subprocess.check_output(['bash','-c', bash_command])
+            output = float(output.decode("utf-8")[:-2])
+            gpu_process.append(output)
+        if is_valid_cpu:
+            files = utils.measure_files(files, delay)
+            files = utils.update_files(files, True)
+        else:
+            time.sleep(delay)
+        # Just output, not added
+        last_reading = (utils.get_total(files, multiple_cpus) + gpu_process[-1]) / powerLoss
+        if last_reading >=0 and printToScreen:
+            utils.log("Process wattage", last_reading)
+            time = round(timer()-start, 1)
+            time_process.append(time)
+            reading_process_wattage.append(last_reading)
+        # Getting the return value of the user's function
+        try:
+            return_value = q.get_nowait()
+            break
+        except queue.Empty:
+            pass
+    if timeseries:
+        with open('process_wattage.csv', 'w') as process_wattage_file:
+            process_wattage_writer = csv.writer(process_wattage_file)
+            process_wattage_writer.writerow(["time", "process wattage reading"])
+            for i in range(len(time_process)):
+                process_wattage_writer.writerow([time_process[i], reading_process_wattage[i]])
+    p.join()
+    end = timer()
+    for file in files:
+        file.process = file.process[1:-1]
+        file.baseline = file.baseline[1:-1]
+    if is_nvidia_gpu:
+        gpu_baseline_average = statistics.mean(gpu_baseline[2:-1])
+        gpu_process_average = statistics.mean(gpu_process[2:-1])
+    else:
+        gpu_baseline_average = 0
+        gpu_process_average = 0
+
+    total_time = end-start # seconds
+    # Formatting the time nicely
+    timedelta = str(datetime.timedelta(seconds=total_time)).split('.')[0]
+
+    if files[0].process == []:
+        raise Exception("Process executed too fast to gather energy consumption")
+    files = utils.average_files(files)
+
+    process_average = utils.get_process_average(files, multiple_cpus, gpu_process_average)
+    baseline_average = utils.get_baseline_average(files, multiple_cpus, gpu_baseline_average)
+    difference_average = process_average - baseline_average
+    watt_averages = [baseline_average, process_average, difference_average, timedelta]
+
+    # Subtracting baseline wattage to get more accurate result
+    process_kwh = convert.to_kwh((process_average - baseline_average)*total_time) / powerLoss
+
+    if is_nvidia_gpu:
+        gpu_file = file("GPU", "")
+        gpu_file.create_gpu(gpu_baseline_average, gpu_process_average)
+        files.append(file("GPU", ""))
+
+    # Logging
+    if printToScreen:
+        utils.log("Final Readings", baseline_average, process_average, difference_average, timedelta)
+    return (process_kwh, return_value, watt_averages, files, total_time, time_baseline, reading_baseline_wattage, time_process, reading_process_wattage)
 
 def measure_baseline_wattage():
     if(True):
-        configuration.initialize_files(configuration.get_powerlog_filename(), configuration.get_process_filename(), configuration.get_nvidia_smi_filename())
         check_seconds = configuration.get_base_check_seconds()
-        cmd.get_cpu_base_report(configuration.get_powerlog_filename(), check_seconds)
-        cmd.get_gpu_base_report(configuration.get_nvidia_smi_filename(),configuration.get_interval(),check_seconds)
+        cmd.get_cpu_base_report(configuration.get_base_powerlog_filename(), check_seconds)
+        cmd.get_gpu_base_report(configuration.get_base_nvidia_smi_filename(),configuration.get_interval(),check_seconds)
         
-    [powerlog_data,general_data] = utils.read_powerlog_file(configuration.get_powerlog_filename(),configuration.get_physical_cpu_sockets())
+    [powerlog_data,general_data] = utils.read_powerlog_file(configuration.get_base_powerlog_filename(),configuration.get_physical_cpu_sockets())
     array = []
     for i in general_data:
         array.append(i.replace(" ", "").split("="))
 
-    [gpu_units,gpu_energy,average_gpu_power] = estimate.estimate_gpu_power_consumption(float(array[0][1]),configuration.get_nvidia_smi_filename())
+    [gpu_units,gpu_energy,average_gpu_power] = estimate.estimate_gpu_power_consumption(float(array[0][1]),configuration.get_base_nvidia_smi_filename())
     print("Baseline Wattage\n\n========CPU=======\nProcessor Energy: {} Joules\nProcessor Energy: {} mWh\nAverage Processor Power: {} Watt".format(array[2][1],array[3][1],array[4][1]))
     print("========DRAM======\nDRAM Energy: {} Joules\nDRAM Energy: {} mWh\nAverage DRAM Power: {} Watt".format(array[8][1],array[9][1],array[10][1]))
     print("========GPU======\nGPU Energy: {} Joules\nGPU Energy: {} mWh\nAverage GPU Power: {} Watt\n\n".format(gpu_energy[0]*3600,gpu_energy[0],average_gpu_power[0]))
@@ -81,12 +212,10 @@ def join_process_cpu_usage(powerlog_filename, process_filename, cpu_sockets):
 
 def main():
     [command,powerlog_filename,process_filename,nvidia_smi_filename,total_process_data,interval,cpu_sockets] = configuration.get_configuration()
-
+    configuration.initialize_files()
     measure_baseline_wattage()
 
     if(True):
-        configuration.initialize_files(powerlog_filename, process_filename, nvidia_smi_filename)
-
         thread_cpu = Process(target = measure_process_cpu_usage, args = (process_filename, 0, ))
         thread_cpu.start()
 
