@@ -47,13 +47,15 @@ def read_powerlog_file(powerlog_filename, cpu_sockets):
     data = pd.read_csv(powerlog_filename)  
     df = pd.DataFrame(data)
     n_tail = 5 + (cpu_sockets * 9)
-    df1 = df[:-n_tail]
-    return df1
+    powerlog_data = df[:-n_tail]
+    n_head = len(df) - n_tail
+    general_data = df[n_head:]['System Time']
+    return [powerlog_data,general_data]
 
-def read_csv_file(powerlog_filename):
+def read_csv_file(csv_filename):
     """Reads a specified csv file and transforms it in a pandas dataframe."""
     
-    data = pd.read_csv(powerlog_filename)  
+    data = pd.read_csv(csv_filename)  
     return pd.DataFrame(data)
 
 def read_txt(name):
