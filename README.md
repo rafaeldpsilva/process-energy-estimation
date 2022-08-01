@@ -83,29 +83,39 @@ This software needs to be configured through a file in a json format, similar to
 
 ```json
 {
+    "BASE_CHECK_SECONDS":5,
+    "REPORTS_PATH": "./process-energy-estimation/reports/",
+    "POWERLOG_FILENAME" : "powerlog.csv",
+    "PROCESS_FILENAME" : "process.csv",
+    "NVIDIA_SMI_FILENAME" : "nvidia.csv",
+    "TOTAL_PROCESS_DATA" : "total_process_data.csv",
     "COMMAND" : "python sorting_algorithms.py", 
-    "POWERLOG_FILENAME" : "./process-energy-estimation/reports/powerlog.csv",
-    "PROCESS_FILENAME" : "./process-energy-estimation/reports/process.csv",
-    "NVIDIA_SMI_FILENAME" : "./process-energy-estimation/reports/nvidia.csv",
-    "TOTAL_PROCESS_DATA" : "./process-energy-estimation/reports/total_process_data.csv",
     "INTERVAL" : 100,
+    "PHYSICAL_CPU_SOCKETS": 1,
     "CPU": 1,
-    "GPU": 0,
-    "DRAM": 1
+    "GPU": 1,
+    "DRAM": 1,
+    "CPU_USAGE_COLLECTOR": 1,
+    "SOC_GPU": 1
 }
 ```
 
-CodeCarbon will look sequentially for arguments in:
+Process Energy Estimation will look sequentially for arguments in:
 
+- `BASE_CHECK_SECONDS`: duration of base consumption reading
+- `REPORTS_PATH`: path to the folder in which reports will be saved
+- `POWERLOG_FILENAME`: name of the file in which the data from Inter Power Gadget will be saved
+- `PROCESS_FILENAME`: name of the file in which the process cpu usage data will be saved
+- `NVIDIA_SMI_FILENAME`: name of the file in which the data from Nvidia System Management Interface will be saved
+- `TOTAL_PROCESS_DATA`: name of the file in which the data created by the two tools and the system will be saved
 - `COMMAND`: the command line to run the software you pretend to measure
-- `POWERLOG_FILENAME`: name/path of the file in which the data from Inter Power Gadget will be saved
-- `PROCESS_FILENAME`: name/path of the file in which the process cpu usage data will be saved
-- `NVIDIA_SMI_FILENAME`: name/path of the file in which the data from Nvidia System Management Interface will be saved
-- `TOTAL_PROCESS_DATA`: name/path of the file in which the data created by the two tools and the system will be saved
 - `INTERVAL`: miliseconds interval to read the GPU information
+- `PHYSICAL_CPU_SOCKETS`: number of physical cpu sockets present in the system
 - `CPU`: 1 or 0 if the component energy consumption is taken in consideration or not, respectively
 - `GPU`: 1 or 0 if the component energy consumption is taken in consideration or not, respectively
 - `DRAM`: 1 or 0 if the component energy consumption is taken in consideration or not, respectively
+- `CPU_USAGE_COLLECTOR`: way of reading the total cpu usage (1-Intel Power Gadget, 2-psutil library)
+- `SOC_GPU`: 1 or 0 if SOC has an integrated GPU or not, respectively
 
 # Examples 🐤
 As an illustration of how to use Process Energy Estimation, we created a simple example using the sorting algorithm [Stooge Sort](https://www.geeksforgeeks.org/stooge-sort/):
