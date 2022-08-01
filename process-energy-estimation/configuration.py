@@ -109,6 +109,11 @@ def get_command():
             configuration = json.load(json_file)
     return configuration['COMMAND']
 
+def get_auxiliary_command():
+    with open("./process-energy-estimation/configuration.json") as json_file:
+            configuration = json.load(json_file)
+    return configuration['AUXILIARY_COMMAND']
+
 def get_interval():
     with open("./process-energy-estimation/configuration.json") as json_file:
             configuration = json.load(json_file)

@@ -32,6 +32,12 @@ def get_gpu_report(filename,interval):
     proc = subprocess.Popen('nvidia-smi --query-gpu=index,timestamp,power.draw --format=csv -lms ' + str(interval) + ' >> ' + filename, shell=True)
     return proc.pid
 
+def run_command(command):
+    "Executes a given command"
+
+    proc = subprocess.Popen(command, shell=True)
+    return proc.pid
+
 def kill_process(pid):
     """Kills the process with the given pid."""
     process = psutil.Process(pid)

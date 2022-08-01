@@ -10,6 +10,8 @@ import psutil
 import datetime
 import pandas as pd
 
+def run_auxiliary_command():
+    return cmd.run_command(configuration.get_auxiliary_command())
 
 def measure_baseline_wattage():
     if(True):
@@ -92,6 +94,8 @@ def join_process_cpu_usage(powerlog_filename, process_filename, cpu_sockets):
     return pd.concat([df, cpu_df], axis = 1)
 
 def main():
+    aux_pid = run_auxiliary_command()
+    
     configuration.initialize_files()
     measure_baseline_wattage()
     
@@ -111,6 +115,9 @@ def main():
 
         cmd.kill_process(pid)
     
+    if psutil.Process(aux_pid).is_running():
+        cmd.kill_process(aux_pid)
+
     cpu_sockets = configuration.get_physical_cpu_sockets()
 
     process_df = join_process_cpu_usage(powerlog_filename, configuration.get_process_filename(), cpu_sockets)
