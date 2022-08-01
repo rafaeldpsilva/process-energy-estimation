@@ -1,4 +1,4 @@
-from multiprocessing import Process, Semaphore
+from multiprocessing import Process, Pipe
 from multiprocessing.connection import Listener
 import utils
 import configuration
@@ -11,7 +11,12 @@ import datetime
 import pandas as pd
 
 def run_auxiliary_command():
-    return cmd.run_command(configuration.get_auxiliary_command())
+    parent_conn, child_conn = Pipe()
+    command = Process(target = cmd.run_command, args = (configuration.get_auxiliary_command(), child_conn, ))
+    command.start()
+    pid = parent_conn.recv()
+    print(pid)
+    return pid
 
 def measure_baseline_wattage():
     if(True):
@@ -115,7 +120,7 @@ def main():
 
         cmd.kill_process(pid)
     
-    if psutil.Process(aux_pid).is_running():
+    if psutil.pid_exists(aux_pid):
         cmd.kill_process(aux_pid)
 
     cpu_sockets = configuration.get_physical_cpu_sockets()
