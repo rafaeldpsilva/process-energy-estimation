@@ -15,7 +15,6 @@ def run_auxiliary_command():
     command = Process(target = cmd.run_command, args = (configuration.get_auxiliary_command(), child_conn, ))
     command.start()
     pid = parent_conn.recv()
-    print(pid)
     return pid
 
 def measure_baseline_wattage():
