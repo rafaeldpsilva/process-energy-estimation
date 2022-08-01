@@ -1,5 +1,6 @@
 import subprocess
 import psutil
+import os
 from time import sleep
 def get_cpu_base_report(filename, duration):
     """Executes the PowerLog3.0 tool for the time specified and creates a csv file wi
@@ -35,8 +36,10 @@ def get_gpu_report(filename,interval):
 def run_command(command,pipe):
     "Executes a given command"
 
-    proc = subprocess.Popen(command, shell=True)
-    pipe.send(proc.pid)
+    #proc = subprocess.Popen(command, shell=True)
+    subprocess.check_output(command, shell=True)
+    #pipe.send(proc.pid)
+    pipe.send(os.getpid())
     pipe.close()
 
 def kill_process(pid):
