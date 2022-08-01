@@ -53,7 +53,6 @@ def read_powerlog_file(powerlog_filename, cpu_sockets):
     powerlog_data = df[:-n_tail]
     n_head = len(df) - n_tail
     general_data = df[n_head:]['System Time']
-    print(general_data)
     return [powerlog_data,general_data]
 
 def read_csv_file(csv_filename):
