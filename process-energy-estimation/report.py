@@ -71,11 +71,11 @@ def print_base_results(elapsed_time,cpu,dram):
         print("DRAM Energy Consumption: {} Wh".format(round(dram_energy,4)))
         
     print("\n-------------------------TOTAL-----------------------")
-    print("The process lasted: {} Seconds".format(elapsed_time))
+    print("The measurement lasted: {} Seconds".format(elapsed_time))
     total_consumption = total_average_cpu_power + total_average_gpu_power + average_dram_power
-    print("The process consumed: {} Watts".format(round(total_consumption,4)))
+    print("Baseline consumption: {} Watts".format(round(total_consumption,4)))
     total_consumption = (total_average_cpu_power + total_average_gpu_power) * elapsed_time + dram_energy
-    print("The process consumed: {} Wh\n\n".format(round(total_consumption/3600,4)))
+    print("Baseline consumption: {} Wh\n\n".format(round(total_consumption/3600,4)))
     
     
 
