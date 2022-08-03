@@ -127,9 +127,6 @@ def main():
     process_df = join_process_cpu_usage(powerlog_filename, configuration.get_process_filename(), cpu_sockets)
     
     report.print_results(process_df,nvidia_smi_filename,cpu_sockets)
-    
-    total_process_data_filename = configuration.get_total_process_data_filename()
-    process_df.to_csv(total_process_data_filename)
 
 if __name__ == '__main__':
     main()

@@ -124,3 +124,6 @@ def print_results(process_df,nvidia_smi_filename,cpu_sockets):
     print("The process consumed: {} Watts".format(round(total_consumption,4)))
     total_consumption = (total_average_cpu_power + total_average_gpu_power) * elapsed_time + dram_energy
     print("The process consumed: {} Wh\n\n".format(round(total_consumption/3600,4)))
+
+    total_process_data_filename = configuration.get_total_process_data_filename()
+    process_df.to_csv(total_process_data_filename)
