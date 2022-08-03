@@ -70,7 +70,7 @@ def estimate_gpu_power_consumption(elapsed_time,nvidia_smi_filename):
         average_gpu_power.append(power)
         gpu_energy.append(power*elapsed_time/3600)
     
-    return [gpu_units,gpu_energy,average_gpu_power]
+    return [gpu_units,gpu_energy,average_gpu_power,gpu_df]
 
 def estimate_dram_power_consumption(df):
     """Estimates the average gpu total power consumption. This function uses the 

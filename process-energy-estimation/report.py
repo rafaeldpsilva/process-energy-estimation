@@ -49,7 +49,7 @@ def print_base_results(elapsed_time,cpu,dram):
     total_average_gpu_power = 0
     total_gpu_energy = 0   
     if(configuration.get_gpu_on()):
-        [gpu_units,gpu_energy,average_gpu_power] = estimate.estimate_gpu_power_consumption(elapsed_time,configuration.get_base_nvidia_smi_filename())
+        [gpu_units,gpu_energy,average_gpu_power,gpu_df] = estimate.estimate_gpu_power_consumption(elapsed_time,configuration.get_base_nvidia_smi_filename())
         print("\n-------------------------GPU-------------------------")
         print("Number of GPU Units: {}".format(gpu_units))
         for x in range(gpu_units):
@@ -98,7 +98,7 @@ def print_results(process_df,nvidia_smi_filename,cpu_sockets):
     total_average_gpu_power = 0
     total_gpu_energy = 0   
     if(configuration.get_gpu_on()):
-        [gpu_units,gpu_energy,average_gpu_power] = estimate.estimate_gpu_power_consumption(elapsed_time,configuration.get_nvidia_smi_filename())
+        [gpu_units,gpu_energy,average_gpu_power, gpu_df] = estimate.estimate_gpu_power_consumption(elapsed_time,configuration.get_nvidia_smi_filename())
         print("\n-------------------------GPU-------------------------")
         print("Number of GPU Units: {}".format(gpu_units))
         for x in range(gpu_units):
@@ -127,3 +127,5 @@ def print_results(process_df,nvidia_smi_filename,cpu_sockets):
 
     total_process_data_filename = configuration.get_total_process_data_filename()
     process_df.to_csv(total_process_data_filename)
+    nvidia_smi_filename = configuration.get_nvidia_smi_filename()
+    gpu_df.to_csv(nvidia_smi_filename)
