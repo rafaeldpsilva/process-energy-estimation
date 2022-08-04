@@ -65,16 +65,18 @@ def measure_process_cpu_usage(process_filename, pid):
     f = open(process_filename, "w")
     f.write("Time,Process CPU Usage(%),Total CPU Usage(%)\n")
     f.close()
+    file = ""
     while True:
         try:
             time = datetime.datetime.now().strftime("%H:%M:%S:%f")
             process_cpu_usage = process.cpu_percent(interval=0.1)/cpu_count
             total_cpu_usage = psutil.cpu_percent(interval=None)
             if(process_cpu_usage != 0.0):
-                f = open(process_filename, "a")
-                f.write(time + "," + str(process_cpu_usage) + "," + str(total_cpu_usage) + "\n")
-                f.close()
+                file += time + "," + str(process_cpu_usage) + "," + str(total_cpu_usage) + "\n"
         except:
+            f = open(process_filename, "a")
+            f.write(file)
+            f.close()
             return 0
 
 def join_process_cpu_usage(powerlog_filename, process_filename, cpu_sockets):
