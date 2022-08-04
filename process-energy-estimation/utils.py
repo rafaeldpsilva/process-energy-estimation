@@ -30,15 +30,17 @@ def read_nvidia_smi_file(nvidia_smi_filename):
         if int(gpu) + 1 > len(power_draw):
             power_draw.append([])
         power = df['power.draw [W]'].iloc[i][:-2]
-        power_draw[gpu].append(float(power.strip()))
+        power_draw[gpu].append([df['timestamp'].iloc[i],float(power.strip())])
         index.append(i)
         i += 1
     
     gpu_df = pd.DataFrame()
     
     for x in range(len(power_draw)):
-        power_draw_df = pd.DataFrame(power_draw[x], columns =['power.draw_' + str(x) + ' [W]'])
+        power_draw_df = pd.DataFrame(power_draw[x], columns =['timestamp_' + str(x),'power.draw_' + str(x) + ' [W]'])
         gpu_df = pd.concat([gpu_df, power_draw_df], axis = 1)
+    
+    print(gpu_df)
     return gpu_df
     
 def read_powerlog_file(powerlog_filename, cpu_sockets):

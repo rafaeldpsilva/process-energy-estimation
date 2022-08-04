@@ -51,7 +51,7 @@ def estimate_gpu_power_consumption(elapsed_time,nvidia_smi_filename):
 
     gpu_df = utils.read_nvidia_smi_file(nvidia_smi_filename)
     gpu_power_sum = []
-    gpu_units = len(gpu_df.columns)
+    gpu_units = int(len(gpu_df.columns)/2)
     for x in range(gpu_units):
         column = 'power.draw_' + str(x) + ' [W]'
         length = len(gpu_df[column])
