@@ -40,7 +40,6 @@ def read_nvidia_smi_file(nvidia_smi_filename):
         power_draw_df = pd.DataFrame(power_draw[x], columns =['timestamp_' + str(x),'power.draw_' + str(x) + ' [W]'])
         gpu_df = pd.concat([gpu_df, power_draw_df], axis = 1)
     
-    print(gpu_df)
     return gpu_df
     
 def read_powerlog_file(powerlog_filename, cpu_sockets):

@@ -127,5 +127,5 @@ def print_results(process_df,nvidia_smi_filename,cpu_sockets):
 
     total_process_data_filename = configuration.get_total_process_data_filename()
     process_df.to_csv(total_process_data_filename)
-    nvidia_smi_filename = configuration.get_nvidia_smi_filename()
-    gpu_df.to_csv(nvidia_smi_filename)
+    reports_path = configuration.get_reports_path()
+    gpu_df.to_csv(reports_path+"/show_gpu.csv")

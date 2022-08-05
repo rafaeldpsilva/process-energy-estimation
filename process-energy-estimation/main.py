@@ -84,20 +84,45 @@ def join_process_cpu_usage(powerlog_filename, process_filename, cpu_sockets):
 
     [powerlog_data,general_data] = utils.read_powerlog_file(powerlog_filename, cpu_sockets)
     process_data = utils.read_csv_file(process_filename)
+    nvidia_df = utils.read_nvidia_smi_file(configuration.get_nvidia_smi_filename())
+
     cpu_time_in_microseconds = convert.array_to_microseconds(process_data['Time'],convert.time_to_microsecs)
+    gpu_time_in_microseconds = convert.array_to_microseconds(nvidia_df['timestamp_0'],convert.datatime_to_microsecs)
+    
     cpu_df = pd.DataFrame([], columns =['Time', 'Process CPU Usage(%)', 'Total CPU Usage(%)'])
-    power_draw = []
+    gpu_array = []
+
     length = len(powerlog_data['System Time'])
+    last_idx = -1
     i = 0
     while i < length:
+        #CPU
         time = convert.time_to_microsecs(powerlog_data['System Time'].iloc[i])
-        [cpu_idx,value] = utils.find_nearest(cpu_time_in_microseconds,time)
-        cpu_df = pd.concat([cpu_df,process_data.iloc[[cpu_idx],[0,1,2]]], ignore_index = True, axis = 0)      
+        [cpu_idx,value] = utils.find_nearest(cpu_time_in_microseconds,time)        
+        cpu_df = pd.concat([cpu_df,process_data.iloc[[cpu_idx],[0,1,2]]], ignore_index = True, axis = 0)
+
+        #GPU
+        [gpu_idx,value] = utils.find_nearest(gpu_time_in_microseconds,time)
+        dif = gpu_idx - last_idx        
+        if dif > 1:
+            sum = 0
+            while last_idx < gpu_idx:
+                last_idx += 1        
+                sum += float(nvidia_df['power.draw_0 [W]'].iloc[last_idx])
+            total = sum/dif
+        else:
+            total = float(nvidia_df['power.draw_0 [W]'].iloc[last_idx])
+        last_idx = gpu_idx
+        
+        temp_time = str(nvidia_df['timestamp_0'].iloc[gpu_idx])
+        gpu_array.append([temp_time,total])
+
         i += 1
     
     df = pd.DataFrame(powerlog_data, columns=['System Time','Elapsed Time (sec)',' CPU Utilization(%)','Processor Power_0(Watt)','Processor Power_1(Watt)','DRAM Power_0(Watt)','Cumulative DRAM Energy_0(Joules)'])
-
-    return pd.concat([df, cpu_df], axis = 1)
+    df= pd.concat([df, cpu_df], axis = 1)
+    gpu_df = pd.DataFrame(gpu_array, columns =['timestamp_0','power.draw_0 [W]'])
+    return pd.concat([df, gpu_df], axis = 1)
 
 def main():
     aux_pid = run_auxiliary_command()
