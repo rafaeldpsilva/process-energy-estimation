@@ -87,11 +87,15 @@ def join_process_cpu_usage(powerlog_filename, process_filename, cpu_sockets):
     nvidia_df = utils.read_nvidia_smi_file(configuration.get_nvidia_smi_filename())
 
     cpu_time_in_microseconds = convert.array_to_microseconds(process_data['Time'],convert.time_to_microsecs)
-    gpu_time_in_microseconds = convert.array_to_microseconds(nvidia_df['timestamp_0'],convert.datatime_to_microsecs)
+
+    gpu_time_in_microseconds = []
+    gpu_units = int(len(nvidia_df.columns)/2)
+    for x in range(gpu_units):
+        gpu_time_in_microseconds.append(convert.array_to_microseconds(nvidia_df['timestamp_'+str(x)],convert.datatime_to_microsecs))
     
     cpu_df = pd.DataFrame([], columns =['Time', 'Process CPU Usage(%)', 'Total CPU Usage(%)'])
-    gpu_array = []
 
+    gpu_array = []
     length = len(powerlog_data['System Time'])
     last_idx = -1
     i = 0
@@ -102,39 +106,48 @@ def join_process_cpu_usage(powerlog_filename, process_filename, cpu_sockets):
         cpu_df = pd.concat([cpu_df,process_data.iloc[[cpu_idx],[0,1,2]]], ignore_index = True, axis = 0)
 
         #GPU
-        [gpu_idx,value] = utils.find_nearest(gpu_time_in_microseconds,time)
-        dif = gpu_idx - last_idx        
-        if dif > 1:
-            sum = 0
-            while last_idx < gpu_idx:
-                last_idx += 1        
-                sum += float(nvidia_df['power.draw_0 [W]'].iloc[last_idx])
-            total = sum/dif
-        else:
-            total = float(nvidia_df['power.draw_0 [W]'].iloc[last_idx])
-        last_idx = gpu_idx
-        
-        temp_time = str(nvidia_df['timestamp_0'].iloc[gpu_idx])
-        gpu_array.append([temp_time,total])
+        temp_array = []
+        for x in range(gpu_units):
+            [gpu_idx,value] = utils.find_nearest(gpu_time_in_microseconds[x],time)
+            dif = gpu_idx - last_idx        
+            if dif > 1:
+                sum = 0
+                while last_idx < gpu_idx:
+                    last_idx += 1        
+                    sum += float(nvidia_df['power.draw_'+str(x)+' [W]'].iloc[last_idx])
+                total = sum/dif
+            else:
+                total = float(nvidia_df['power.draw_'+str(x)+' [W]'].iloc[last_idx])
+            last_idx = gpu_idx
 
+            temp_array.append(total)
+            temp_array.append(str(nvidia_df['timestamp_'+str(x)].iloc[gpu_idx]))
+
+        gpu_array.append(temp_array)
         i += 1
     
     df = pd.DataFrame(powerlog_data, columns=['System Time','Elapsed Time (sec)',' CPU Utilization(%)','Processor Power_0(Watt)','Processor Power_1(Watt)','DRAM Power_0(Watt)','Cumulative DRAM Energy_0(Joules)'])
-    df= pd.concat([df, cpu_df], axis = 1)
-    gpu_df = pd.DataFrame(gpu_array, columns =['timestamp_0','power.draw_0 [W]'])
+    df = pd.concat([df, cpu_df], axis = 1)
+
+    col = []
+    for x in range(gpu_units):
+        col.append('timestamp_'+str(x))
+        col.append('power.draw_'+str(x)+' [W]')
+    
+    gpu_df = pd.DataFrame(gpu_array, columns =col)
     return pd.concat([df, gpu_df], axis = 1)
 
 def main():
     aux_pid = run_auxiliary_command()
     
-    configuration.initialize_files()
-    measure_baseline_wattage()
+    #configuration.initialize_files()
+    #measure_baseline_wattage()
     
     powerlog_filename = configuration.get_powerlog_filename()
     nvidia_smi_filename = configuration.get_nvidia_smi_filename()
     process_filename = configuration.get_process_filename()
     
-    if(True):
+    if(False):
         thread_cpu = Process(target = measure_process_cpu_usage, args = (configuration.get_process_filename(), 0, ))
         thread_cpu.start()
 
