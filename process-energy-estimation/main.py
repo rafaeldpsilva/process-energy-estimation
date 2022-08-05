@@ -120,8 +120,8 @@ def join_process_cpu_usage(powerlog_filename, process_filename, cpu_sockets):
                 total = float(nvidia_df['power.draw_'+str(x)+' [W]'].iloc[last_idx])
             last_idx = gpu_idx
 
-            temp_array.append(total)
             temp_array.append(str(nvidia_df['timestamp_'+str(x)].iloc[gpu_idx]))
+            temp_array.append(total)
 
         gpu_array.append(temp_array)
         i += 1
