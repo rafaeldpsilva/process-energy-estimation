@@ -106,11 +106,12 @@ def join_process_cpu_usage(powerlog_filename, process_filename, cpu_sockets):
 
         #GPU
         temp_array = []
-        total = 0
+        total_sum = 0
         for x in range(gpu_units):
-            temp_array,last_idx,total = add_gpu(gpu_time_in_microseconds, x, nvidia_df, time,last_idx,temp_array,total)
+            temp_array,last_idx,total_sum = add_gpu(gpu_time_in_microseconds, x, nvidia_df, time,last_idx,temp_array,total_sum)
         
-        temp_array.append(total)
+        print(total_sum)
+        temp_array.append(total_sum)
         gpu_array.append(temp_array)
         i += 1
     
@@ -126,7 +127,7 @@ def join_process_cpu_usage(powerlog_filename, process_filename, cpu_sockets):
     gpu_df = pd.DataFrame(gpu_array, columns =col)
     return pd.concat([df, gpu_df], axis = 1)
 
-def add_gpu(gpu_time_in_microseconds, x, nvidia_df,time,last_idx,temp_array,total):
+def add_gpu(gpu_time_in_microseconds, x, nvidia_df,time,last_idx,temp_array,total_sum):
     [gpu_idx,value] = utils.find_nearest(gpu_time_in_microseconds[x],time)
     dif = gpu_idx - last_idx        
     if dif > 1:
@@ -141,9 +142,9 @@ def add_gpu(gpu_time_in_microseconds, x, nvidia_df,time,last_idx,temp_array,tota
 
     temp_array.append(str(nvidia_df['timestamp_'+str(x)].iloc[gpu_idx]))
     temp_array.append(total)
-    total += total
+    total_sum += total
 
-    return temp_array,last_idx,total
+    return temp_array,last_idx,total_sum
 
 def main():
     aux_pid = run_auxiliary_command()
