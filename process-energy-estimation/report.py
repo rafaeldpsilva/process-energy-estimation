@@ -1,13 +1,14 @@
 import estimate
 import configuration
+import matplotlib.pyplot as plt
 
 def plot_power(df):
     """Plots the cpu total power consumption and the cpu process power consumption, t
     hrought time."""
 
-    plt.plot(df['Elapsed Time (sec)'], df['Processor Power_0(Watt)'], label='Energia Consumida pelo Sistema no CPU')
-    plt.plot(df['Elapsed Time (sec)'],df['Process CPU Power(Watt)'], label='Energia Consumida pelo Processo no CPU')
-    #plt.plot(df['Elapsed Time (sec)'],df['power.draw [W]'], label='Energia Consumida pela GPU')
+    plt.plot(df['Elapsed Time (sec)'], df['DRAM Power_0(Watt)'], label='DRAM')
+    plt.plot(df['Elapsed Time (sec)'], df['Process CPU Power(Watt)'], label='CPU')
+    plt.plot(df['Elapsed Time (sec)'], df['Total GPU Power0(Watt)'], label='GPU')
     plt.legend()
     plt.show()
 
