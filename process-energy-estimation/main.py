@@ -18,10 +18,9 @@ def run_auxiliary_command():
     return pid
 
 def measure_baseline_wattage():
-    if(True):
-        check_seconds = configuration.get_base_check_seconds()
-        cmd.get_cpu_base_report(configuration.get_base_powerlog_filename(), check_seconds)
-        cmd.get_gpu_base_report(configuration.get_base_nvidia_smi_filename(),configuration.get_interval(),check_seconds)
+    check_seconds = configuration.get_base_check_seconds()
+    cmd.get_cpu_base_report(configuration.get_base_powerlog_filename(), check_seconds)
+    cmd.get_gpu_base_report(configuration.get_base_nvidia_smi_filename(),configuration.get_interval(),check_seconds)
     
     physical_cpu_sockets = configuration.get_physical_cpu_sockets()
     [powerlog_data,general_data] = utils.read_powerlog_file(configuration.get_base_powerlog_filename(),physical_cpu_sockets)
@@ -149,14 +148,14 @@ def add_gpu(gpu_time_in_microseconds, x, nvidia_df,time,last_idx,temp_array,tota
 def main():
     aux_pid = run_auxiliary_command()
     
-    #configuration.initialize_files()
-    #measure_baseline_wattage()
+    configuration.initialize_files()
+    measure_baseline_wattage()
     
     powerlog_filename = configuration.get_powerlog_filename()
     nvidia_smi_filename = configuration.get_nvidia_smi_filename()
     process_filename = configuration.get_process_filename()
     
-    if(False):
+    if(True):
         thread_cpu = Process(target = measure_process_cpu_usage, args = (configuration.get_process_filename(), 0, ))
         thread_cpu.start()
 

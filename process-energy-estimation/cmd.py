@@ -36,10 +36,8 @@ def get_gpu_report(filename,interval):
 def run_command(command,pipe):
     "Executes a given command"
 
-    #proc = subprocess.Popen(command, shell=True)
-    subprocess.check_output(command, shell=True)
-    #pipe.send(proc.pid)
-    pipe.send(os.getpid())
+    proc = subprocess.Popen(command, shell=True)
+    pipe.send(proc.pid)
     pipe.close()
 
 def kill_process(pid):
