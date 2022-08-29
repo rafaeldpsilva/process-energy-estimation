@@ -109,7 +109,6 @@ def join_process_cpu_usage(powerlog_filename, process_filename, cpu_sockets):
         for x in range(gpu_units):
             temp_array,last_idx,total_sum = add_gpu(gpu_time_in_microseconds, x, nvidia_df, time,last_idx,temp_array,total_sum)
         
-        print(total_sum)
         temp_array.append(total_sum)
         gpu_array.append(temp_array)
         i += 1
@@ -121,7 +120,7 @@ def join_process_cpu_usage(powerlog_filename, process_filename, cpu_sockets):
     for x in range(gpu_units):
         col.append('timestamp_'+str(x))
         col.append('GPU Power_'+str(x)+'(Watt)')
-    col.append('Total GPU Power'+str(x)+'(Watt)')
+    col.append('Total GPU Power(Watt)')
     
     gpu_df = pd.DataFrame(gpu_array, columns =col)
     return pd.concat([df, gpu_df], axis = 1)
@@ -155,7 +154,7 @@ def main():
     nvidia_smi_filename = configuration.get_nvidia_smi_filename()
     process_filename = configuration.get_process_filename()
     
-    if(True):
+    if(False):
         thread_cpu = Process(target = measure_process_cpu_usage, args = (configuration.get_process_filename(), 0, ))
         thread_cpu.start()
 

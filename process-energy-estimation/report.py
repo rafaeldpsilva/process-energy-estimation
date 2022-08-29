@@ -8,7 +8,7 @@ def plot_power(df):
 
     plt.plot(df['Elapsed Time (sec)'], df['DRAM Power_0(Watt)'], label='DRAM')
     plt.plot(df['Elapsed Time (sec)'], df['Process CPU Power(Watt)'], label='CPU')
-    plt.plot(df['Elapsed Time (sec)'], df['Total GPU Power0(Watt)'], label='GPU')
+    plt.plot(df['Elapsed Time (sec)'], df['Total GPU Power(Watt)'], label='GPU')
     plt.legend()
     plt.show()
 
