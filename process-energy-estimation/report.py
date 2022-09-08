@@ -78,8 +78,8 @@ def print_base_results(elapsed_time,cpu,dram):
     total_consumption = (total_average_cpu_power + total_average_gpu_power) * elapsed_time + dram_energy
     print("Baseline consumption: {} Wh\n\n".format(round(total_consumption/3600,4)))
 
-    reports_path = configuration.get_reports_path()
-    gpu_df.to_csv(reports_path+"/show_base_gpu.csv")
+    base_reports_path = configuration.get_base_reports_path()
+    gpu_df.to_csv(base_reports_path+"/show_base_gpu.csv")
 
 def print_results(process_df,nvidia_smi_filename,cpu_sockets):
     print("\n\nProcess Consumption")

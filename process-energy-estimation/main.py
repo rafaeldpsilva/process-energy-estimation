@@ -23,6 +23,7 @@ def measure_baseline_wattage():
     cmd.get_gpu_base_report(configuration.get_base_nvidia_smi_filename(),configuration.get_interval(),check_seconds)
     
     physical_cpu_sockets = configuration.get_physical_cpu_sockets()
+    df = join_base_usage()
     [powerlog_data,general_data] = utils.read_powerlog_file(configuration.get_base_powerlog_filename(),physical_cpu_sockets)
     general_data_array = []
     for i in general_data:
@@ -43,6 +44,8 @@ def measure_baseline_wattage():
     dram.append(power)
 
     report.print_base_results(elapsed_time,cpu,dram)
+    base_reports_path = configuration.get_base_reports_path()
+    df.to_csv(base_reports_path+"/total_base_data.csv")
 
 def measure_process_cpu_usage(process_filename, pid):
     """Registers the cpu usage of the process with given pid on the specified file."""
@@ -78,6 +81,49 @@ def measure_process_cpu_usage(process_filename, pid):
             f.close()
             return 0
 
+def join_base_usage():
+    """Merges the three csv files on a pandas dataframe."""
+    powerlog_filename = configuration.get_base_powerlog_filename()
+    cpu_sockets = configuration.get_physical_cpu_sockets()
+
+    [powerlog_data,general_data] = utils.read_powerlog_file(powerlog_filename, cpu_sockets)
+
+    nvidia_df = utils.read_nvidia_smi_file(configuration.get_base_nvidia_smi_filename())
+    gpu_time_in_microseconds = []
+    gpu_units = int(len(nvidia_df.columns)/2)
+    for x in range(gpu_units):
+        gpu_time_in_microseconds.append(convert.array_to_microseconds(nvidia_df['timestamp_'+str(x)],convert.datatime_to_microsecs))
+    
+    cpu_df = pd.DataFrame([], columns =['Time', 'Process CPU Usage(%)', 'Total CPU Usage(%)'])
+
+    gpu_array = []
+    length = len(powerlog_data['System Time'])
+    last_idx = -1
+    i = 0
+    while i < length:
+        time = convert.time_to_microsecs(powerlog_data['System Time'].iloc[i])
+
+        #GPU
+        temp_array = []
+        total_sum = 0
+        for x in range(gpu_units):
+            temp_array,last_idx,total_sum = add_gpu(gpu_time_in_microseconds, x, nvidia_df, time,last_idx,temp_array,total_sum)
+        
+        temp_array.append(total_sum)
+        gpu_array.append(temp_array)
+        i += 1
+    
+    df = pd.DataFrame(powerlog_data, columns=['System Time','Elapsed Time (sec)',' CPU Utilization(%)','Processor Power_0(Watt)','Processor Power_1(Watt)','DRAM Power_0(Watt)','Cumulative DRAM Energy_0(Joules)'])
+
+    col = []
+    for x in range(gpu_units):
+        col.append('timestamp_'+str(x))
+        col.append('GPU Power_'+str(x)+'(Watt)')
+    col.append('Total GPU Power(Watt)')
+    
+    gpu_df = pd.DataFrame(gpu_array, columns =col)
+    return pd.concat([df, gpu_df], axis = 1)
+
 def join_process_cpu_usage(powerlog_filename, process_filename, cpu_sockets):
     """Merges the three csv files on a pandas dataframe."""
 
@@ -98,8 +144,9 @@ def join_process_cpu_usage(powerlog_filename, process_filename, cpu_sockets):
     last_idx = -1
     i = 0
     while i < length:
-        #CPU USAGE
         time = convert.time_to_microsecs(powerlog_data['System Time'].iloc[i])
+
+        #CPU USAGE
         [cpu_idx,value] = utils.find_nearest(cpu_time_in_microseconds,time)        
         cpu_df = pd.concat([cpu_df,process_data.iloc[[cpu_idx],[0,1,2]]], ignore_index = True, axis = 0)
 
@@ -147,7 +194,7 @@ def add_gpu(gpu_time_in_microseconds, x, nvidia_df,time,last_idx,temp_array,tota
 def main():
     aux_pid = run_auxiliary_command()
     
-    configuration.initialize_files()
+    #configuration.initialize_files()
     measure_baseline_wattage()
     
     powerlog_filename = configuration.get_powerlog_filename()
@@ -166,8 +213,8 @@ def main():
 
         cmd.kill_process(pid)
     
-    if psutil.pid_exists(aux_pid):
-        cmd.kill_process(aux_pid)
+    """ if psutil.pid_exists(aux_pid):
+        cmd.kill_process(aux_pid) """
 
     cpu_sockets = configuration.get_physical_cpu_sockets()
 
