@@ -201,7 +201,7 @@ def main():
     nvidia_smi_filename = configuration.get_nvidia_smi_filename()
     process_filename = configuration.get_process_filename()
     
-    if(False):
+    if(True):
         thread_cpu = Process(target = measure_process_cpu_usage, args = (configuration.get_process_filename(), 0, ))
         thread_cpu.start()
 
@@ -213,8 +213,8 @@ def main():
 
         cmd.kill_process(pid)
     
-    """ if psutil.pid_exists(aux_pid):
-        cmd.kill_process(aux_pid) """
+    if psutil.pid_exists(aux_pid):
+        cmd.kill_process(aux_pid)
 
     cpu_sockets = configuration.get_physical_cpu_sockets()
 

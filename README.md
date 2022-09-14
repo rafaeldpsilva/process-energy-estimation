@@ -125,21 +125,41 @@ In the [`examples/`](/examples/) folder run:
 ```
 python ./process-energy-estimation/main.py
 ```
-Which should output something like the following lines:
+Which should output something like the following lines, one for base consumption and the other for the process consumption:
 
-```ProcessReport
+```
+ProcessReport 
 Max Temp = 100
 number of nodes = 1
 TDP(mWh)_0 = 15.00
 Base Frequency = 2001.00(MHz)
 Logging...Done
 
-The process lasted: 10.469 Seconds
-The process consumed: 4.2477 Watts
-CPU: 3.6233 Watts | GPU: 0 Watts | DRAM: 0.6244 Watts
-The process consumed: 0.0123 Wh
+
+Process Consumption
+
+-------------------------CPU-------------------------
+Number of CPU Sockets: 1
+
+Average CPU 0 Power: 17.7172 Watts
+CPU 0 Energy Consumption: 0.0641 Wh
+
+-------------------------GPU-------------------------
+Number of GPU Units: 1
+
+Average GPU 0 Power: 5.6009 Watts
+GPU 0 Energy Consumption: 0.0203 Wh
+
+-------------------------DRAM------------------------
+Average DRAM Power: 0.7053 Watts
+DRAM Energy Consumption: 0.0025 Wh
+
+-------------------------TOTAL-----------------------
+The process lasted: 13.027 Seconds
+The process consumed: 24.0234 Watts
+The process consumed: 0.0869 Wh
 ```
-This will also create four `.csv` files in the [`reports/`](/examples/reports/) folder with information created by this system, Intel Power Gadget and Nvidia System Management Interface, in the respective files.
+This will also create several `.csv` files in the [`reports/`](/examples/reports/) folder with information created by this [`system`](/examples/process-energy-estimation/reports/total_process_data.csv), [`Intel Power Gadget`](/examples/process-energy-estimation/reports/powerlog.csv) and [`Nvidia System Management Interface`](/examples/process-energy-estimation/reports/powerlog.csv). There are also auxiliary files such as [`process.csv`](/examples/process-energy-estimation/reports/process.csv), which has the cpu utilization percentage, and the [`gpu.csv`](/examples/process-energy-estimation/reports/gpu.csv), which shows the energy consumption of the gpu(s), in the respective column(s).
 
 # Infrastructure Support 🖥️
 Currently the package supports following hardware infrastructure.
