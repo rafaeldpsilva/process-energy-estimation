@@ -194,7 +194,7 @@ def add_gpu(gpu_time_in_microseconds, x, nvidia_df,time,last_idx,temp_array,tota
 def main():
     aux_pid = run_auxiliary_command()
     
-    #configuration.initialize_files()
+    configuration.initialize_files()
     measure_baseline_wattage()
     
     powerlog_filename = configuration.get_powerlog_filename()
